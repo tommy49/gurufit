@@ -1,5 +1,11 @@
 package com.gurutel.gurufit;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -46,14 +52,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.android.gms.fitness.Fitness.API;
 
-
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity  {
     public static final String TAG = "BasicSensorsApi";
     private static final int REQUEST_OAUTH = 1;
     private static final String DATE_FORMAT = "yyyy.MM.dd HH:mm:ss";
@@ -73,6 +78,10 @@ public class MainActivity extends ActionBarActivity {
     private OnDataPointListener mListener3;
 
 
+    private AlarmManager mManager;
+    private GregorianCalendar mCalendar;
+    private NotificationManager mNotification;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,13 +91,43 @@ public class MainActivity extends ActionBarActivity {
         // screen, as well as to adb logcat.
         initializeLogging();
 
+        //2015-08-06 added start
+        //통지 매니저를 취득
+        mNotification = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        //알람 매니저를 취득
+        mManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        //현재 시각을 취득
+        mCalendar = new GregorianCalendar();
+        Log.i(TAG, " ToDate : "+mCalendar.getTime().toString());
+        Intent intent = new Intent(MainActivity.this, AlarmRecever.class);
+        PendingIntent pender = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+
+//        mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), pender);
+        mManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 6000, pender);
+
+        Log.i(TAG, "AlarmManger Register Date : "+mCalendar.getTime().toString());
+
+       //2015-08-06 added  end
+
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
         }
 
         buildFitnessClient();
+
+
     }
 
+    public class AlarmRecever extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            //Toast.makeText(context, "hi", Toast.LENGTH_LONG).show();
+            Log.i(TAG, "AlarmReceiver Started.");
+
+        }
+    }
     /**
      *  Build a {@link GoogleApiClient} that will authenticate the user and allow the application
      *  to connect to Fitness APIs. The scopes included should match the scopes your app needs
