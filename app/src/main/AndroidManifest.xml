@@ -16,10 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".AlarmRecever">
-            <intent-filter>
-                <action android:name="gurutel.gurufit.FIRE"></action>
-            </intent-filter>
+
+        <receiver android:name=".AlarmRecever" android:process=".remote">
         </receiver>
 
 
