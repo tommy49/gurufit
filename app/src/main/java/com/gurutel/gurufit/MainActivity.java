@@ -41,11 +41,13 @@ import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.result.DataSourcesResult;
 
 
-
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.android.gms.fitness.Fitness.API;
@@ -114,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
                                 Log.i(TAG, "Connected!!!");
                                 // Now you can make calls to the Fitness APIs.  What to do?
                                 // Look at some data!!
-                                new InsertAndVerifyDataTask().execute();
+
                                 // findFitnessDataSources();
                                 // findFitnessDataLocation();
                                 //  findFitnessDataPower();
@@ -123,6 +125,10 @@ public class MainActivity extends ActionBarActivity {
                                 subscribeLOCATION();
                                 subscribeDISTANCE();
                                 dumpSubscriptionsList();
+
+                                new InsertAndVerifyDataTask().execute();
+
+                                findFitnessDataLocation();
 
                             }
 
@@ -430,7 +436,7 @@ public class MainActivity extends ActionBarActivity {
                 // At least one datatype must be specified.
                 .setDataTypes(DataType.TYPE_POWER_SAMPLE)
                 .setDataSourceTypes(DataSource.TYPE_RAW)
-              //  .setDataSourceTypes(DataSource.TYPE_DERIVED)
+                        //  .setDataSourceTypes(DataSource.TYPE_DERIVED)
                 .build())
                 .setResultCallback(new ResultCallback<DataSourcesResult>() {
                                        @Override
@@ -544,6 +550,7 @@ public class MainActivity extends ActionBarActivity {
                 });
         Log.i(TAG,"[END register_data_listener2]");
         // [END register_data_listener]
+
     }
 
 
@@ -586,7 +593,7 @@ public class MainActivity extends ActionBarActivity {
                         }
                     }
                 });
-        Log.i(TAG,"[END register_data_listener3]");
+        Log.i(TAG, "[END register_data_listener3]");
         // [END register_data_listener]
     }
 
@@ -667,6 +674,7 @@ public class MainActivity extends ActionBarActivity {
             // In general, logging fitness information should be avoided for privacy reasons.
             printData(dataReadResult);
 
+            /*
             DataReadRequest readRequest2 = queryLocationData();
             // [START read_dataset]
             // Invoke the History API to fetch the data with the query and await the result of
@@ -677,7 +685,7 @@ public class MainActivity extends ActionBarActivity {
             // For the sake of the sample, we'll print the data so we can see what we just added.
             // In general, logging fitness information should be avoided for privacy reasons.
             printData(dataReadResult2);
-
+            */
 
             return null;
         }
@@ -731,14 +739,27 @@ public class MainActivity extends ActionBarActivity {
         Date now = new Date();
         cal.setTime(now);
         long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
-        long startTime = cal.getTimeInMillis();
+
+//        Log.i(TAG, " Time : " + cal.get(Calendar.HOUR_OF_DAY) + "-" + cal.get(Calendar.MINUTE) +  "-" +   cal.get(Calendar.SECOND));
+//        cal.add(Calendar.WEEK_OF_YEAR, -1);
+     //   cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE));
+
+      //  cal.add(Calendar.DAY_OF_YEAR, -1);
+     //   long startTime = cal.getTimeInMillis();
+
+//        long startTime = cal.getTimeInMillis() - ( cal.get(Calendar.HOUR_OF_DAY)  *  cal.get(Calendar.MINUTE) *  cal.get(Calendar.SECOND) * 1000);
+        long startTime = cal.getTimeInMillis() - ( 10 * 60 * 1000);
+
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+
+
         Log.i(TAG, "Range Start: " + dateFormat.format(startTime));
         Log.i(TAG, "Range End: " + dateFormat.format(endTime));
         Log.i(TAG, "Range Start: " + startTime);
         Log.i(TAG, "Range End: " + endTime);
+
+
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
                 // The data request can specify multiple data types to return, effectively
@@ -747,11 +768,17 @@ public class MainActivity extends ActionBarActivity {
                 // datapoints each consisting of a few steps and a timestamp.  The more likely
                 // scenario is wanting to see how many steps were walked per day, for 7 days.
                 .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+             //   .aggregate(DataType.TYPE_STEP_COUNT_DELTA , DataType.TYPE_STEP_COUNT_DELTA)
+
                         // Analogous to a "Group By" in SQL, defines how data should be aggregated.
                         // bucketByTime allows for a time span, whereas bucketBySession would allow
                         // bucketing by "sessions", which would need to be defined in code.
-                .bucketByTime(1, TimeUnit.DAYS)
+//                .bucketByTime(1, TimeUnit.DAYS)
+                .bucketByTime(1, TimeUnit.MINUTES)
+//                .bucketByTime(1, TimeUnit.HOURS)
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+//                .setTimeRange(startTime, endTime, TimeUnit.MINUTES)
+
                 .build();
         // [END build_read_data_request]
 
@@ -765,7 +792,9 @@ public class MainActivity extends ActionBarActivity {
         Date now = new Date();
         cal.setTime(now);
         long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
+//        cal.add(Calendar.WEEK_OF_YEAR, -1);
+        cal.add(Calendar.DAY_OF_YEAR, -1);
+
         long startTime = cal.getTimeInMillis();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
@@ -778,7 +807,9 @@ public class MainActivity extends ActionBarActivity {
                 // In this example, it's very unlikely that the request is for several hundred
                 // datapoints each consisting of a few steps and a timestamp.  The more likely
                 // scenario is wanting to see how many steps were walked per day, for 7 days.
+//                .aggregate(DataType.TYPE_LOCATION_SAMPLE, DataType.AGGREGATE_LOCATION_BOUNDING_BOX)
                 .aggregate(DataType.TYPE_LOCATION_SAMPLE, DataType.AGGREGATE_LOCATION_BOUNDING_BOX)
+
                         // Analogous to a "Group By" in SQL, defines how data should be aggregated.
                         // bucketByTime allows for a time span, whereas bucketBySession would allow
                         // bucketing by "sessions", which would need to be defined in code.
