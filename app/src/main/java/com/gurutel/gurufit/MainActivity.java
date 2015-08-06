@@ -8,7 +8,6 @@ import android.content.Context;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
@@ -29,12 +28,12 @@ import com.google.android.gms.fitness.FitnessStatusCodes;
 import com.google.android.gms.fitness.data.Subscription;
 import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.result.ListSubscriptionsResult;
-/*
+
 import com.gurutel.gurufit.common.logger.Log;
 import com.gurutel.gurufit.common.logger.LogView;
 import com.gurutel.gurufit.common.logger.LogWrapper;
 import com.gurutel.gurufit.common.logger.MessageOnlyLogFilter;
-*/
+
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -94,7 +93,7 @@ public class MainActivity extends ActionBarActivity  {
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.
 
-       // initializeLogging();
+        initializeLogging();
 
         //2015-08-06 added start
         //���� �Ŵ����� ���
@@ -109,7 +108,7 @@ public class MainActivity extends ActionBarActivity  {
         PendingIntent pender = PendingIntent.getBroadcast(MainActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 //        mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), pender);
-        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000, 10000, pender);
+        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, 1*60000, pender);
 
         Log.i(TAG, "AlarmManger Register Date : "+mCalendar.getTime().toString());
 
@@ -971,7 +970,7 @@ public class MainActivity extends ActionBarActivity  {
     /**
      *  Initialize a custom log class that outputs both to in-app targets and logcat.
      */
-    /*
+
     private void initializeLogging() {
         // Wraps Android's native log framework.
         LogWrapper logWrapper = new LogWrapper();
@@ -987,7 +986,7 @@ public class MainActivity extends ActionBarActivity  {
         msgFilter.setNext(logView);
         Log.i(TAG, "Ready");
     }
-*/
+
 
 
 }
