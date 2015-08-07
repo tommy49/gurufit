@@ -3,37 +3,35 @@ package com.gurutel.gurufit;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+//import android.view.Menu;
+//import android.view.MenuItem;
 import android.content.Intent;
-import android.content.IntentSender;
+//import android.content.IntentSender;
 import android.graphics.Color;
-import android.os.AsyncTask;
-import android.widget.Toast;
+//import android.os.AsyncTask;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.Scopes;
+//import com.google.android.gms.common.ConnectionResult;
+//import com.google.android.gms.common.GooglePlayServicesUtil;
+//import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.FitnessStatusCodes;
-import com.google.android.gms.fitness.data.Subscription;
+//import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+//import com.google.android.gms.common.api.ResultCallback;
+//import com.google.android.gms.common.api.Scope;
+//import com.google.android.gms.common.api.Status;
+//import com.google.android.gms.fitness.FitnessStatusCodes;
+//import com.google.android.gms.fitness.data.Subscription;
 import com.google.android.gms.fitness.request.OnDataPointListener;
-import com.google.android.gms.fitness.result.ListSubscriptionsResult;
+//import com.google.android.gms.fitness.result.ListSubscriptionsResult;
 
 import com.gurutel.gurufit.common.logger.Log;
 import com.gurutel.gurufit.common.logger.LogView;
 import com.gurutel.gurufit.common.logger.LogWrapper;
 import com.gurutel.gurufit.common.logger.MessageOnlyLogFilter;
-
+/*
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -48,23 +46,21 @@ import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.result.DataSourcesResult;
+*/
 
-
-import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+//import java.text.SimpleDateFormat;
+//import java.util.Calendar;
+//import java.util.Date;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+//import java.util.List;
+//import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends ActionBarActivity  {
-    public static final String TAG = "BasicSensorsApi";
-    private static final int REQUEST_OAUTH = 1;
-    private static final String DATE_FORMAT = "yyyy.MM.dd HH:mm:ss";
+    public static final String TAG = "GuruFit";
+   // private static final int REQUEST_OAUTH = 1;
+   // private static final String DATE_FORMAT = "yyyy.MM.dd HH:mm:ss";
 
     /**
      *  Track whether an authorization activity is stacking over the current activity, i.e. when
@@ -74,17 +70,20 @@ public class MainActivity extends ActionBarActivity  {
     private static final String AUTH_PENDING = "auth_state_pending";
     private boolean authInProgress = false;
 
-    private GoogleApiClient mClient = null;
+    //private GoogleApiClient mClient = null;
 
-    private OnDataPointListener mListener;
-    private OnDataPointListener mListener2;
-    private OnDataPointListener mListener3;
+   // private OnDataPointListener mListener;
+  //  private OnDataPointListener mListener2;
+  //  private OnDataPointListener mListener3;
 
 
     private AlarmManager mManager;
     private GregorianCalendar mCalendar;
     private NotificationManager mNotification;
 
+    private Client mClient;
+    private Recording recording;
+    private History history;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,11 +95,8 @@ public class MainActivity extends ActionBarActivity  {
         initializeLogging();
 
         //2015-08-06 added start
-        //���� �Ŵ����� ���
         mNotification = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        //�˶� �Ŵ����� ���
         mManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        //���� �ð��� ���
         mCalendar = new GregorianCalendar();
         Log.i(TAG, " ToDate : "+mCalendar.getTime().toString());
 
@@ -108,60 +104,45 @@ public class MainActivity extends ActionBarActivity  {
         PendingIntent pender = PendingIntent.getBroadcast(MainActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 //        mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), pender);
-        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, 1*60000, pender);
+        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, 1 * 60000, pender); //1 minute
+//        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, 1 * 6000, pender); //6sec
 
         Log.i(TAG, "AlarmManger Register Date : "+mCalendar.getTime().toString());
 
        //2015-08-06 added  end
-
+        /*
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
         }
+*/
 
-
-        buildFitnessClient();
+      //  buildFitnessClient();
 
 
     }
 
 
-    /**
-     *  Build a {@link GoogleApiClient} that will authenticate the user and allow the application
-     *  to connect to Fitness APIs. The scopes included should match the scopes your app needs
-     *  (see documentation for details). Authentication will occasionally fail intentionally,
-     *  and in those cases, there will be a known resolution, which the OnConnectionFailedListener()
-     *  can address. Examples of this include the user never having signed in before, or
-     *  having multiple accounts on the device and needing to specify which account to use, etc.
-     */
+   /*
     private void buildFitnessClient() {
         Log.i(TAG, "Connecting...");
         // Create the Google API Client
-        mClient = new GoogleApiClient.Builder(this)
-                .addApi(Fitness.CONFIG_API)
-                .addApi(Fitness.SESSIONS_API)
-                .addApi(Fitness.SENSORS_API)
-                .addApi(Fitness.RECORDING_API)
-                .addApi(Fitness.HISTORY_API)
-                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-                .addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
-                .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
-                .addConnectionCallbacks(
-                        new GoogleApiClient.ConnectionCallbacks() {
-                            @Override
-                            public void onConnected(Bundle bundle) {
-                                Log.i(TAG, "Connected!!!");
-                                // Now you can make calls to the Fitness APIs.  What to do?
-                                // Look at some data!!
+        mClient = new Client(this,
+                    new Client.Connection(){
+                        @Override
+                        public void onConnected() {
+                            recording = new Recording(mClient.getClient());
+                            recording.subscribe();
 
-                                // findFitnessDataSources();
-                                // findFitnessDataLocation();
-                                //  findFitnessDataPower();
-                                subscribeACTIVITYSAMPLE();
-                                subscribeSTEPCOUNT();
-                                subscribeLOCATION();
-                                subscribeDISTANCE();
-                                dumpSubscriptionsList();
+                            history = new History(mClient.getClient());
+                            history.readBefore(new Date());
 
+                        }
+                    });
+    }
+
+*/
+
+/*
                                 new InsertAndVerifyDataTask().execute();
 
                                 findFitnessDataLocation();
@@ -211,43 +192,43 @@ public class MainActivity extends ActionBarActivity  {
                 )
                 .build();
     }
+    */
 
     @Override
     protected void onStart() {
         super.onStart();
         // Connect to the Fitness API
         Log.i(TAG, "onStart Connecting...");
-        mClient.connect();
+      //  mClient.connect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mClient.isConnected()) {
+       // if (sensors != null)
+        //    sensors.unsubscribe();
+/*
+        if (recording != null)
+            recording.unsubscribe();
+
+        if (mClient != null)
             mClient.disconnect();
-        }
+*/
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_OAUTH) {
-            authInProgress = false;
-            if (resultCode == RESULT_OK) {
-                // Make sure the app is not already connected or attempting to connect
-                if (!mClient.isConnecting() && !mClient.isConnected()) {
-                    mClient.connect();
-                }
-            }
-        }
+        Log.i(TAG, "onActivityResult");
+      //  mClient.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(AUTH_PENDING, authInProgress);
+      //  outState.putBoolean(AUTH_PENDING, authInProgress);
     }
 
-
+/*
     public void subscribeACTIVITYSAMPLE(){
         Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_ACTIVITY_SAMPLE)
                 .setResultCallback(new ResultCallback<Status>() {
@@ -327,10 +308,7 @@ public class MainActivity extends ActionBarActivity  {
                 });
 
     }
-    /**
-     * Fetch a list of all active subscriptions and log it. Since the logger for this sample
-     * also prints to the screen, we can see what is happening in this way.
-     */
+
     private void dumpSubscriptionsList() {
         // [START list_current_subscriptions]
 //        Fitness.RecordingApi.listSubscriptions(mClient, DataType.TYPE_ACTIVITY_SAMPLE)
@@ -348,9 +326,6 @@ public class MainActivity extends ActionBarActivity  {
         // [END list_current_subscriptions]
     }
 
-    /**
-     * Cancel the ACTIVITY_SAMPLE subscription by calling unsubscribe on that {@link DataType}.
-     */
     private void cancelSubscription() {
         final String dataTypeStr = DataType.TYPE_ACTIVITY_SAMPLE.toString();
         Log.i(TAG, "Unsubscribing from data type: " + dataTypeStr);
@@ -373,14 +348,7 @@ public class MainActivity extends ActionBarActivity  {
         // [END unsubscribe_from_datatype]
     }
 
-    /**
-     * Find available data sources and attempt to register on a specific {@link DataType}.
-     * If the application cares about a data type but doesn't care about the source of the data,
-     * this can be skipped entirely, instead calling
-     *     {@link com.google.android.gms.fitness.SensorsApi
-     *     #register(GoogleApiClient, SensorRequest, DataSourceListener)},
-     * where the {@link SensorRequest} contains the desired data type.
-     */
+
     private void findFitnessDataSources() {
         // [START find_data_sources]
         Log.i(TAG, "[START find_data_sources]");
@@ -407,14 +375,7 @@ public class MainActivity extends ActionBarActivity  {
                                                Log.i(TAG, "Data Source getDataType: " + dataSource.getDataType());
                                                Log.i(TAG, "DataType.TYPE_STEP_COUNT_DELTA:" + DataType.TYPE_STEP_COUNT_DELTA);
                                                //Let's register a listener to receive Activity data!
-                            /*
-                            if (dataSource.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)
-                                    && mListener == null) {
-                                Log.i(TAG, "Data source for LOCATION_SAMPLE found!  Registering.");
-                                registerFitnessDataListener(dataSource,
-                                        DataType.TYPE_LOCATION_SAMPLE);
-                            }
-                           */
+
                                                if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)
                                                        && mListener == null) {
                                                    Log.i(TAG, "Data source for TYPE_STEP_COUNT_DELTA found!  Registering.");
@@ -496,10 +457,8 @@ public class MainActivity extends ActionBarActivity  {
         Log.i(TAG, "[END find_data_power]");
     }
 
-    /**
-     * Register a listener with the Sensors API for the provided {@link DataSource} and
-     * {@link DataType} combo.
-     */
+
+
     private void registerFitnessDataListener(DataSource dataSource, DataType dataType) {
 
 
@@ -634,9 +593,7 @@ public class MainActivity extends ActionBarActivity  {
     }
 
 
-    /**
-     * Unregister the listener with the Sensors API.
-     */
+
     private void unregisterFitnessDataListener() {
         if (mListener == null) {
             // This code only activates one listener at a time.  If there's no listener, there's
@@ -663,15 +620,9 @@ public class MainActivity extends ActionBarActivity  {
                 });
         // [END unregister_data_listener]
     }
-    /**
-     *  Create a {@link DataSet} to insert data into the History API, and
-     *  then create and execute a {@link DataReadRequest} to verify the insertion succeeded.
-     *  By using an {@link AsyncTask}, we can schedule synchronous calls, so that we can query for
-     *  data after confirming that our insert was successful. Using asynchronous calls and callbacks
-     *  would not guarantee that the insertion had concluded before the read request was made.
-     *  An example of an asynchronous call using a callback can be found in the example
-     *  on deleting data below.
+
      */
+  /*
     private class InsertAndVerifyDataTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
            /*
@@ -698,6 +649,8 @@ public class MainActivity extends ActionBarActivity  {
             Log.i(TAG, "Data insert was successful!");
             // [END insert_dataset]
             */
+
+  /*
             // Begin by creating the query.
             DataReadRequest readRequest = queryFitnessData();
             // [START read_dataset]
@@ -722,14 +675,12 @@ public class MainActivity extends ActionBarActivity  {
             // In general, logging fitness information should be avoided for privacy reasons.
             printData(dataReadResult2);
             */
-
+/*
             return null;
         }
     }
-
-    /**
-     * Create and return a {@link DataSet} of step count data for the History API.
-     */
+*/
+/*
     private DataSet insertFitnessData() {
         Log.i(TAG, "Creating a new data insert request");
 
@@ -765,9 +716,7 @@ public class MainActivity extends ActionBarActivity  {
         return dataSet;
     }
 
-    /**
-     * Return a {@link DataReadRequest} for all step count changes in the past week.
-     */
+
     private DataReadRequest queryFitnessData() {
         // [START build_read_data_request]
         // Setting a start and end date using a range of 1 week before this moment.
@@ -857,16 +806,6 @@ public class MainActivity extends ActionBarActivity  {
         return readRequest;
     }
 
-
-
-    /**
-     * Log a record of the query result. It's possible to get more constrained data sets by
-     * specifying a data source or data type, but for demonstrative purposes here's how one would
-     * dump all the data. In this sample, logging also prints to the device screen, so we can see
-     * what the query returns, but your app should not log fitness information as a privacy
-     * consideration. A better option would be to dump the data you receive to a local data
-     * directory to avoid exposing it to other applications.
-     */
     private void printData(DataReadResult dataReadResult) {
         // [START parse_read_data_result]
         // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
@@ -910,10 +849,7 @@ public class MainActivity extends ActionBarActivity  {
     }
     // [END parse_dataset]
 
-    /**
-     * Delete a {@link DataSet} from the History API. In this example, we delete all
-     * step count data for the past 24 hours.
-     */
+  /*
     private void deleteData() {
         Log.i(TAG, "Deleting today's step count data");
 
