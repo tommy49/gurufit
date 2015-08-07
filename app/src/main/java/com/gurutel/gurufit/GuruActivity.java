@@ -24,7 +24,7 @@ public class GuruActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        moveTaskToBack(true);
+      //  moveTaskToBack(true);
 
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
