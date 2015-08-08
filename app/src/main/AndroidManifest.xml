@@ -18,8 +18,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".GuruActivity">
-
+        <activity android:name=".GuruActivity"
+               android:theme="@android:style/Theme.NoDisplay">
         </activity>
 
         <receiver android:name=".AlarmRecever" android:process=".remote">

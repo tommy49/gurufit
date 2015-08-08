@@ -29,7 +29,6 @@ public class AlarmRecever extends BroadcastReceiver {
         Intent i = new Intent(context,GuruActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
-
         Toast.makeText(context, "hi2", Toast.LENGTH_LONG).show();
 
     }

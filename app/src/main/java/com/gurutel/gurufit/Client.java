@@ -6,7 +6,9 @@ package com.gurutel.gurufit;
 
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -21,6 +23,8 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 
+import static android.app.PendingIntent.getActivity;
+
 public class Client {
     public static final String TAG = "GuruFit";
 
@@ -28,15 +32,19 @@ public class Client {
 
     private GoogleApiClient client;
     private boolean authInProgress = false;
+    public boolean  progressAuth = false;
+
 
     public interface Connection {
         public void onConnected();
     }
     private Connection connection;
 
+
+
 //    public Client(final Activity activity, final Connection connection) {
     public Client(final Activity activity, final Connection connection) {
-
+        Log.i(TAG, "GoogleApiClient Start");
             this.connection = connection;
         client = new GoogleApiClient.Builder(activity)
                 .addApi(Fitness.CONFIG_API)
@@ -73,6 +81,10 @@ public class Client {
                             @Override
                             public void onConnectionFailed(ConnectionResult result) {
                                 Log.i(TAG, "Connection failed. Cause: " + result.toString());
+                                progressAuth = true;
+
+
+
                                 if (!result.hasResolution()) {
                                     GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), activity, 0).show();
                                     return;
@@ -92,6 +104,8 @@ public class Client {
                 )
                 .build();
     }
+
+
 
     public void connect() {
         client.connect();

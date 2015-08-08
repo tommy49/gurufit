@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ import com.google.android.gms.fitness.result.DataSourcesResult;
 //import java.text.SimpleDateFormat;
 //import java.util.Calendar;
 //import java.util.Date;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 //import java.util.List;
@@ -84,6 +86,7 @@ public class MainActivity extends ActionBarActivity  {
     private Client mClient;
     private Recording recording;
     private History history;
+    private Sensors sensors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +94,10 @@ public class MainActivity extends ActionBarActivity  {
         setContentView(R.layout.activity_main);
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.
+
+
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         initializeLogging();
 
@@ -100,29 +107,25 @@ public class MainActivity extends ActionBarActivity  {
         mCalendar = new GregorianCalendar();
         Log.i(TAG, " ToDate : "+mCalendar.getTime().toString());
 
-        Intent intent = new Intent(MainActivity.this, AlarmRecever.class);
-        PendingIntent pender = PendingIntent.getBroadcast(MainActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
+        resetAlarm(0,0);
 //        mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), pender);
-        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, 1 * 60000, pender); //1 minute
-//        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, 1 * 6000, pender); //6sec
 
-        Log.i(TAG, "AlarmManger Register Date : "+mCalendar.getTime().toString());
+
 
        //2015-08-06 added  end
-        /*
+
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
         }
-*/
 
-      //  buildFitnessClient();
+
+        buildFitnessClient();
 
 
     }
 
 
-   /*
+
     private void buildFitnessClient() {
         Log.i(TAG, "Connecting...");
         // Create the Google API Client
@@ -130,6 +133,24 @@ public class MainActivity extends ActionBarActivity  {
                     new Client.Connection(){
                         @Override
                         public void onConnected() {
+
+                            sensors = new Sensors(mClient.getClient(),
+                                    new Sensors.DatasourcesListener() {
+                                        @Override
+                                        public void onDatasourcesListed() {
+                                            Log.i(TAG,"datasources listed");
+                                            ArrayList<String> datasources = sensors.getDatasources();
+                                            for (String d:datasources) {
+                                                Log.i(TAG, d);
+                                            }
+                                        }
+                                     }
+                            );
+
+                            Log.i(TAG,"Sensors Subscribe start.....");
+                            sensors.listDatasourcesAndSubscribe();
+                            Log.i(TAG,"Sensors Subscribe End.....");
+
                             recording = new Recording(mClient.getClient());
                             recording.subscribe();
 
@@ -139,8 +160,6 @@ public class MainActivity extends ActionBarActivity  {
                         }
                     });
     }
-
-*/
 
 /*
                                 new InsertAndVerifyDataTask().execute();
@@ -195,37 +214,98 @@ public class MainActivity extends ActionBarActivity  {
     */
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        // Connect to the Fitness API
+        Log.i(TAG, "MainActiviey   onRestart .....................");
+    }
+
+
+    @Override
     protected void onStart() {
         super.onStart();
         // Connect to the Fitness API
-        Log.i(TAG, "onStart Connecting...");
-      //  mClient.connect();
+        Log.i(TAG, "MainActiviey onStart Connecting...");
+        mClient.connect();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Connect to the Fitness API
+        Log.i(TAG, "MainActiviey   onResume .....................");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Connect to the Fitness API
+        Log.i(TAG, "MainActiviey   onPause .....................");
+
+   //     moveTaskToBack(true);
+    }
+
+    private void setAlarm(int curAlarm, int typeAlarm){
+
+        //       mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, 1 * 60000, pendingIntent()); //1 minute
+        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 10000, 1 * 30000, pendingIntent(curAlarm, typeAlarm)); //6sec
+        Log.i(TAG, "AlarmManger Register Date : "+mCalendar.getTime().toString());
+    }
+
+
+    private PendingIntent pendingIntent(int curAlarm,int typeAlarm) {
+        Intent intent;
+        PendingIntent pender;
+        if(typeAlarm==0) {
+            intent = new Intent(MainActivity.this, AlarmRecever.class);
+            pender = PendingIntent.getBroadcast(MainActivity.this, curAlarm, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }else{
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+            pender = PendingIntent.getActivity(MainActivity.this, curAlarm, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        return pender;
+    }
+
+    private void resetAlarm(int curAlarm,int typeAlarm) {
+        mManager.cancel(pendingIntent(curAlarm, typeAlarm));
+    }
+
+
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.i(TAG, "MainActiviey   onStop .....................");
        // if (sensors != null)
         //    sensors.unsubscribe();
-/*
-        if (recording != null)
-            recording.unsubscribe();
+
+//        if (recording != null)
+//            recording.unsubscribe();
 
         if (mClient != null)
             mClient.disconnect();
-*/
+
+         setAlarm(0,0);
+         finish();
+
+    }
+
+    protected void onDestory() {
+        super.onDestroy();
+        // Connect to the Fitness API
+        Log.i(TAG, "MainActiviey   onDestory .....................");
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "onActivityResult");
-      //  mClient.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "MainActiviey onActivityResult");
+        mClient.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-      //  outState.putBoolean(AUTH_PENDING, authInProgress);
+        outState.putBoolean(AUTH_PENDING, authInProgress);
     }
 
 /*
