@@ -42,8 +42,8 @@ public class Client {
 
 
 
-//    public Client(final Activity activity, final Connection connection) {
     public Client(final Activity activity, final Connection connection) {
+ //   public Client(final Activity activity, final Connection connection) {
         Log.i(TAG, "GoogleApiClient Start");
             this.connection = connection;
         client = new GoogleApiClient.Builder(activity)

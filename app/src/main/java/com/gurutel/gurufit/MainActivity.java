@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.content.Intent;
 //import android.content.IntentSender;
 import android.graphics.Color;
+import android.telephony.TelephonyManager;
 //import android.os.AsyncTask;
 
 //import com.google.android.gms.common.ConnectionResult;
@@ -94,12 +95,19 @@ public class MainActivity extends ActionBarActivity  {
         setContentView(R.layout.activity_main);
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.
+        TelephonyManager telManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+        String phoneNum = telManager.getLine1Number();
+
+        GlobalApp globalApp = (GlobalApp) getApplication();
+        globalApp.setmMyPhoneNumber(phoneNum);
 
 
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         initializeLogging();
+
+        Log.i(TAG, "MainActivity  Phone Number : "+phoneNum);
 
         //2015-08-06 added start
         mNotification = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);

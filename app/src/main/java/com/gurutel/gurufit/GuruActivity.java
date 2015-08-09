@@ -33,15 +33,19 @@ public class GuruActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-       // moveTaskToBack(true);
+        moveTaskToBack(true);
 
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
         }
 
         Log.i(TAG, "GuruActivity onCreate ");
+        GlobalApp globalApp = (GlobalApp) getApplication();
+        String PhoneNumber = globalApp.getmMyPhoneNumber();
+        Log.i(TAG, "GuruActivity Global Variable Phone Number : " + PhoneNumber);
+
         // Create the Google API Client
-       getClient();
+        getClient();
     }
 
     protected  void getClient(){
@@ -92,7 +96,7 @@ public class GuruActivity extends Activity {
         // Connect to the Fitness API
 
         //if(authInProgress)
-            backGround = moveTaskToBack(true);
+         //   backGround = moveTaskToBack(true);
         /*
         if(mClient.progressAuth){
             backGround = moveTaskToBack(false);

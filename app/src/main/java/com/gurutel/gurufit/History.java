@@ -45,7 +45,9 @@ public class History {
 
     public void read(long start, long end) {
 
-        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");// SimpleDateFormat.getDateInstance();
+//        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");// SimpleDateFormat.getDateInstance();
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// SimpleDateFormat.getDateInstance();
+
         Log.i(TAG, "history reading range: " + dateFormat.format(start) + " - " + dateFormat.format(end));
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
