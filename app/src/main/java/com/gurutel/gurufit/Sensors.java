@@ -3,6 +3,9 @@ package com.gurutel.gurufit;
 /**
  * Created by tey3 on 15. 8. 9.
  */
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -67,7 +70,7 @@ public class Sensors {
                             datasources.add(device.getManufacturer() + " " + device.getModel() + " [" + dataSource.getDataType().getName() + " " + fields + "]");
 
                             final DataType dataType = dataSource.getDataType();
-                            if (    dataType.equals(DataType.TYPE_LOCATION_SAMPLE)){  //||
+                            if (dataType.equals(DataType.TYPE_LOCATION_SAMPLE)) {  //||
                                 //    dataType.equals(DataType.TYPE_STEP_COUNT_DELTA) ||
                                 //    dataType.equals(DataType.TYPE_DISTANCE_DELTA) ||
                                 //    dataType.equals(DataType.TYPE_HEART_RATE_BPM)) {
@@ -97,9 +100,9 @@ public class Sensors {
                                             public void onResult(Status status) {
                                                 if (status.isSuccess()) {
                                                     listeners.add(listener);
-                                                    Log.i(TAG,"Listener for " + dataType.getName() + " registered");
+                                                    Log.i(TAG, "Listener for " + dataType.getName() + " registered");
                                                 } else {
-                                                    Log.i(TAG,"Failed to register listener for " + dataType.getName());
+                                                    Log.i(TAG, "Failed to register listener for " + dataType.getName());
                                                 }
                                             }
                                         });
@@ -138,7 +141,7 @@ public class Sensors {
                                             Value value = dataPoint.getValue(field);
                                             msg += field + "=" + value + ", ";
                                         }
-                                        Log.i(TAG,msg);
+                                        Log.i(TAG, msg);
                                     }
                                 };
 
@@ -154,9 +157,9 @@ public class Sensors {
                                             public void onResult(Status status) {
                                                 if (status.isSuccess()) {
                                                     listeners.add(listener);
-                                                    Log.i(TAG,"Listener for " + dataType.getName() + " registered");
+                                                    Log.i(TAG, "Listener for " + dataType.getName() + " registered");
                                                 } else {
-                                                    Log.i(TAG,"Failed to register listener for " + dataType.getName());
+                                                    Log.i(TAG, "Failed to register listener for " + dataType.getName());
                                                 }
                                             }
                                         });
@@ -176,14 +179,16 @@ public class Sensors {
                         @Override
                         public void onResult(Status status) {
                             if (status.isSuccess()) {
-                                Log.i(TAG,"Listener was removed!");
+                                Log.i(TAG, "Listener was removed!");
                             } else {
-                                Log.i(TAG,"Listener was not removed.");
+                                Log.i(TAG, "Listener was not removed.");
                             }
                         }
                     });
         }
         listeners.clear();
     }
+
+
 
 }

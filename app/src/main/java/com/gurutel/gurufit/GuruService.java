@@ -2,6 +2,8 @@ package com.gurutel.gurufit;
 
 import android.app.Service;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.util.Log;
 import android.content.Intent;
@@ -38,7 +40,7 @@ public class GuruService extends Service {
     public void onStart(Intent intent, int startId) {
         // TODO Auto-generated method stub
         super.onStart(intent, startId);
-        Log.i(TAG,"GuruService onStart");
+        Log.i(TAG, "GuruService onStart");
         mClient = new ClientService(this,
                 new ClientService.Connection(){
                     @Override
@@ -80,4 +82,8 @@ public class GuruService extends Service {
         Log.i(TAG,"GuruService is destroy");
 
     }
+
+
+
+
 }
