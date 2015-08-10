@@ -33,7 +33,6 @@ public class GuruService extends Service {
         super.onCreate();
         Log.i(TAG, "GuruService onCreate");
         // Create the Google API Client
-
     }
 
     @Override
@@ -41,11 +40,20 @@ public class GuruService extends Service {
         // TODO Auto-generated method stub
         super.onStart(intent, startId);
         Log.i(TAG, "GuruService onStart");
+
+        MyGlobals.getInstance().setmMyPhoneNumber(intent.getStringExtra("phoneNum"));
+        Log.i(TAG, "GuruService Intent Phone Number : "+intent.getStringExtra("phoneNum"));
         mClient = new ClientService(this,
                 new ClientService.Connection(){
                     @Override
                     public void onConnected() {
                         Log.i(TAG, "API Connected..... ["+mClient+"]");
+
+                        recording = new Recording(mClient.getClient());
+                        recording.subscribe();
+                        history = new History(mClient.getClient());
+                        history.readBefore(new Date());
+
 
                         sensors = new Sensors(mClient.getClient(),
                                 new Sensors.DatasourcesListener() {
@@ -62,10 +70,6 @@ public class GuruService extends Service {
 
 
 
-                        recording = new Recording(mClient.getClient());
-                        recording.subscribe();
-                        history = new History(mClient.getClient());
-                        history.readBefore(new Date());
                         sensors.listDatasourcesAndSubscribe();
 
                     }

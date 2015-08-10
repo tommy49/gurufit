@@ -142,6 +142,12 @@ public class MainActivity extends ActionBarActivity  {
                         @Override
                         public void onConnected() {
 
+                            recording = new Recording(mClient.getClient());
+                            recording.subscribe();
+
+                            history = new History(mClient.getClient());
+                            history.readBefore(new Date());
+
                             sensors = new Sensors(mClient.getClient(),
                                     new Sensors.DatasourcesListener() {
                                         @Override
@@ -155,13 +161,6 @@ public class MainActivity extends ActionBarActivity  {
                                      }
                             );
 
-
-
-                            recording = new Recording(mClient.getClient());
-                            recording.subscribe();
-
-                            history = new History(mClient.getClient());
-                            history.readBefore(new Date());
 
                             Log.i(TAG, "Sensors Subscribe start.....");
                             sensors.listDatasourcesAndSubscribe();

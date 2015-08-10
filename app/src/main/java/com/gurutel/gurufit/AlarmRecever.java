@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -29,10 +30,15 @@ public class AlarmRecever extends BroadcastReceiver {
 
         Log.e(TAG, "AlarmReceiver 111 Started.");
 
+        TelephonyManager telManager = (TelephonyManager)context.getSystemService(context.TELEPHONY_SERVICE);
+        String phoneNum = telManager.getLine1Number();
+
+
 //        Intent i = new Intent(context,GuruActivity.class);
         Intent i = new Intent(context,GuruService.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+ //       i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        context.startActivity(i);
+        i.putExtra("phoneNum",phoneNum);
         context.startService(i);
         Toast.makeText(context, "hi2", Toast.LENGTH_LONG).show();
 

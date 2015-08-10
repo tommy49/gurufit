@@ -2,6 +2,7 @@ package com.gurutel.gurufit;
 
 import android.os.AsyncTask;
 import android.os.Build;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import org.apache.http.NameValuePair;
