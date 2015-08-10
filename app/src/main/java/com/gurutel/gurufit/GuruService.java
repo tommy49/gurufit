@@ -60,13 +60,14 @@ public class GuruService extends Service {
                                 }
                         );
 
-                        sensors.listDatasourcesAndSubscribe();
+
 
                         recording = new Recording(mClient.getClient());
                         recording.subscribe();
-
                         history = new History(mClient.getClient());
                         history.readBefore(new Date());
+                        sensors.listDatasourcesAndSubscribe();
+
                     }
                 });
         mClient.connect();

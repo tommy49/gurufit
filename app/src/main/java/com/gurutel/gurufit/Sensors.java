@@ -31,6 +31,8 @@ public class Sensors {
 
     public static final String TAG = "GuruFit";
 
+    private SendInfo sendInfo;
+
     private GoogleApiClient client;
     private ArrayList<OnDataPointListener> listeners = new ArrayList<>();
 
@@ -82,6 +84,20 @@ public class Sensors {
                                         for (Field field : dataPoint.getDataType().getFields()) {
                                             Value value = dataPoint.getValue(field);
                                             msg += field + "=" + value + ", ";
+
+                                            Log.i(TAG,"onDataPoint Field : "+field);
+
+                                            if(field.toString().equals("latitude(f)")){
+                                                Log.i(TAG,"Lat Set : "+value);
+                                                MyGlobals.getInstance().setmLat(String.valueOf(value));
+                                            }else if(field.toString().equals("longitude(f)")){
+                                                Log.i(TAG,"Lon Set : "+value);
+                                                MyGlobals.getInstance().setmLon(String.valueOf(value));
+                                            }else if(field.toString().equals("accuracy(f)")){
+                                                Log.i(TAG,"Accuracy Set : "+value);
+                                                MyGlobals.getInstance().setmAccuracy(String.valueOf(value));
+                                            }
+
                                         }
                                         Log.i(TAG, msg);
                                         unsubscribe();
@@ -140,6 +156,7 @@ public class Sensors {
                                         for (Field field : dataPoint.getDataType().getFields()) {
                                             Value value = dataPoint.getValue(field);
                                             msg += field + "=" + value + ", ";
+
                                         }
                                         Log.i(TAG, msg);
                                     }
@@ -180,6 +197,13 @@ public class Sensors {
                         public void onResult(Status status) {
                             if (status.isSuccess()) {
                                 Log.i(TAG, "Listener was removed!");
+
+                              //  GlobalApp globalApp = new GlobalApp();
+                                //Log.i(TAG, "Step Start Date : " + MyGlobals.getInstance().getmStepStartDate());
+                                //Log.i(TAG, "Step End Date : " + MyGlobals.getInstance().getmStepEndtDate());
+                                //Log.i(TAG, "Step Count : " + MyGlobals.getInstance().getmStepCount());
+                                sendInfo = new SendInfo();
+                                sendInfo.execute("");
                             } else {
                                 Log.i(TAG, "Listener was not removed.");
                             }

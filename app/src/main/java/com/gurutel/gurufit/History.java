@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class History {
     public static final String TAG = "GuruFit";
     private GoogleApiClient client;
-    private SendInfo sendInfo;
+
     public History(GoogleApiClient client) {
         this.client = client;
     }
@@ -93,15 +93,21 @@ public class History {
                 + ", range: [" + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + "-" + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + "]\n"
                 + ", fields: [";
 
+        MyGlobals myGlobals = MyGlobals.getInstance();
+        myGlobals.setmStepStartDate(dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
+        myGlobals.setmStepEndDate(dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
+        //Log.i(TAG, "Step Start Date : " + globalApp.getmStepStartDate());
+
         for(Field field : dp.getDataType().getFields()) {
             msg += field.getName() + "=" + dp.getValue(field) + " ";
+            if(field.getName().equals("steps")){
+                myGlobals.setmStepCount(String.valueOf(dp.getValue(field)));
+                Log.i(TAG, "STEPS COUNT : "+dp.getValue(field));
+            }
         }
 
         msg += "]";
         Log.i(TAG, msg);
-
-        //sendInfo = new SendInfo();
-        //sendInfo.execute("");
     }
 
 }

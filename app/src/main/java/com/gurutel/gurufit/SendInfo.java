@@ -1,6 +1,7 @@
 package com.gurutel.gurufit;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 
 import org.apache.http.NameValuePair;
@@ -15,6 +16,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.os.Build.SERIAL;
 
 
 /**
@@ -36,7 +39,7 @@ public class SendInfo extends AsyncTask<String,Void,Boolean> {
         HttpURLConnection urlConnection = null;
         URL mURL = null;
 
-        String sUrl="http://211.115.217.106/test/test.php";
+        String sUrl="http://211.115.217.70/GuruFit/SetInfo.php";
 
         try{
             Log.i(TAG,"SendInfo AsyncTask sUrl:"+sUrl);
@@ -48,15 +51,21 @@ public class SendInfo extends AsyncTask<String,Void,Boolean> {
             urlConnection.setRequestMethod("POST");
             urlConnection.setConnectTimeout(5000);  //connection timeout 5sec....
 
-            Log.i(TAG,"SendInfo AsyncTask SET POST");
+            Log.i(TAG, "SendInfo AsyncTask SET POST");
 
             List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-            params.add(new BasicNameValuePair("PhoneNumber", "01098955259"));
-            params.add(new BasicNameValuePair("StepCount", "999"));
-            params.add(new BasicNameValuePair("Lon", "128.1234"));
+            params.add(new BasicNameValuePair("PhoneNumber", MyGlobals.getInstance().getmMyPhoneNumber()));
+            params.add(new BasicNameValuePair("StepCount", MyGlobals.getInstance().getmStepCount()));
+            params.add(new BasicNameValuePair("StepStartDate", MyGlobals.getInstance().getmStepStartDate()));
+            params.add(new BasicNameValuePair("StepEndDate", MyGlobals.getInstance().getmStepEndDate()));
+            params.add(new BasicNameValuePair("Lon", MyGlobals.getInstance().getmLon()));
+            params.add(new BasicNameValuePair("Lat", MyGlobals.getInstance().getmLat()));
+            params.add(new BasicNameValuePair("Accuracy", MyGlobals.getInstance().getmAccuracy()));
+            params.add(new BasicNameValuePair("Serial", SERIAL));
 
-            Log.i(TAG,"SendInfo AsyncTask OutputStream");
+
+            Log.i(TAG,"SendInfo AsyncTask params:"+params);
 
             OutputStream os = urlConnection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
@@ -108,7 +117,12 @@ public class SendInfo extends AsyncTask<String,Void,Boolean> {
 
             result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
             result.append("=");
-            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            if(pair.getValue()==null){
+                result.append("");
+            }else {
+                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            }
+           // Log.i(TAG,"SendInfo getQuery result : "+result.toString());
         }
 
         return result.toString();

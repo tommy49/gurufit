@@ -98,9 +98,9 @@ public class MainActivity extends ActionBarActivity  {
         TelephonyManager telManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
         String phoneNum = telManager.getLine1Number();
 
-        GlobalApp globalApp = (GlobalApp) getApplication();
-        globalApp.setmMyPhoneNumber(phoneNum);
-
+        //GlobalApp globalApp = (GlobalApp) getApplication();
+        //globalApp.setmMyPhoneNumber(phoneNum);
+        MyGlobals.getInstance().setmMyPhoneNumber(phoneNum);
 
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -155,15 +155,18 @@ public class MainActivity extends ActionBarActivity  {
                                      }
                             );
 
-                            Log.i(TAG,"Sensors Subscribe start.....");
-                            sensors.listDatasourcesAndSubscribe();
-                            Log.i(TAG,"Sensors Subscribe End.....");
+
 
                             recording = new Recording(mClient.getClient());
                             recording.subscribe();
 
                             history = new History(mClient.getClient());
                             history.readBefore(new Date());
+
+                            Log.i(TAG, "Sensors Subscribe start.....");
+                            sensors.listDatasourcesAndSubscribe();
+                            Log.i(TAG, "Sensors Subscribe End.....");
+
 
                         }
                     });
@@ -256,7 +259,7 @@ public class MainActivity extends ActionBarActivity  {
     private void setAlarm(int curAlarm, int typeAlarm){
 
         //       mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, 1 * 60000, pendingIntent()); //1 minute
-        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 10000, 1 * 30000, pendingIntent(curAlarm, typeAlarm)); //6sec
+        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 10000, 5 * 60000, pendingIntent(curAlarm, typeAlarm)); //6sec
         Log.i(TAG, "AlarmManger Register Date : "+mCalendar.getTime().toString());
     }
 
