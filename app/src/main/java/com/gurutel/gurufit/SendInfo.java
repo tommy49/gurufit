@@ -43,14 +43,15 @@ public class SendInfo extends AsyncTask<String,Void,Boolean> {
         String sUrl="http://211.115.217.70/GuruFit/SetInfo.php";
 
         try{
-            Log.i(TAG,"SendInfo AsyncTask sUrl:"+sUrl);
+          //Log.i(TAG,"SendInfo AsyncTask sUrl:"+sUrl);
             mURL = new URL(sUrl);
             urlConnection = (HttpURLConnection) mURL.openConnection();
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
             urlConnection.setUseCaches(false);
             urlConnection.setRequestMethod("POST");
-            urlConnection.setConnectTimeout(5000);  //connection timeout 5sec....
+//            urlConnection.setConnectTimeout(5000);  //connection timeout 5sec....
+            urlConnection.setConnectTimeout(15000);  //connection timeout 15sec....
 
             Log.i(TAG, "SendInfo AsyncTask SET POST");
 
