@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.text.ParseException;
 
 public class History {
     public static final String TAG = "GuruFit";
@@ -37,11 +38,21 @@ public class History {
 //        Date now = new Date();
         cal.setTime(date);
         long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.DAY_OF_YEAR, -1);
-        long startTime = cal.getTimeInMillis();
+        //cal.add(Calendar.DAY_OF_YEAR, -1);
+        //long startTime = cal.getTimeInMillis();
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        java.util.Date mDate = cal.getTime();
+        String Today = new SimpleDateFormat("yyyyMMdd").format(mDate);
+        try {
+            cal.setTime(formatter.parse(Today));
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+        long startTime = cal.getTimeInMillis();
         read(startTime, endTime);
     }
+
 
     public void read(long start, long end) {
 
