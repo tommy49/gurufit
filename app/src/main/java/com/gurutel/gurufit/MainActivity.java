@@ -1,38 +1,28 @@
 package com.gurutel.gurufit;
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-//import android.view.Menu;
-//import android.view.MenuItem;
 import android.content.Intent;
-//import android.content.IntentSender;
 import android.graphics.Color;
 import android.telephony.TelephonyManager;
-//import android.os.AsyncTask;
-
-//import com.google.android.gms.common.ConnectionResult;
-//import com.google.android.gms.common.GooglePlayServicesUtil;
-//import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.GoogleApiClient;
-//import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-//import com.google.android.gms.common.api.ResultCallback;
-//import com.google.android.gms.common.api.Scope;
-//import com.google.android.gms.common.api.Status;
-//import com.google.android.gms.fitness.FitnessStatusCodes;
-//import com.google.android.gms.fitness.data.Subscription;
-import com.google.android.gms.fitness.request.OnDataPointListener;
-//import com.google.android.gms.fitness.result.ListSubscriptionsResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import com.gurutel.gurufit.common.logger.Log;
 import com.gurutel.gurufit.common.logger.LogView;
 import com.gurutel.gurufit.common.logger.LogWrapper;
 import com.gurutel.gurufit.common.logger.MessageOnlyLogFilter;
+
 /*
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Bucket;
@@ -61,8 +51,13 @@ import java.util.GregorianCalendar;
 
 
 public class MainActivity extends ActionBarActivity  {
+
     public static final String TAG = "GuruFit";
-   // private static final int REQUEST_OAUTH = 1;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+
+    // private static final int REQUEST_OAUTH = 1;
    // private static final String DATE_FORMAT = "yyyy.MM.dd HH:mm:ss";
 
     /**
@@ -82,7 +77,7 @@ public class MainActivity extends ActionBarActivity  {
 
     private AlarmManager mManager;
     private GregorianCalendar mCalendar;
-    private NotificationManager mNotification;
+   // private NotificationManager mNotification;
 
     private Client mClient;
     private Recording recording;
@@ -109,18 +104,48 @@ public class MainActivity extends ActionBarActivity  {
 
         Log.i(TAG, "MainActivity  Phone Number : "+phoneNum);
 
+
+
+
+
         //2015-08-06 added start
-        mNotification = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+     //   mNotification = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         mManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         mCalendar = new GregorianCalendar();
         Log.i(TAG, " ToDate : "+mCalendar.getTime().toString());
 
         resetAlarm(0,0);
 //        mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), pender);
+        //2015-08-06 added  end
 
+       //2015-08-11 added start
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(context);
+                boolean sentToken = sharedPreferences
+                        .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+                if (sentToken) {
+                   // mInformationTextView.setText(getString(R.string.gcm_send_message));
+                    Log.i(TAG, "[GCM] Token retrieved and sent to server! You can now use gcmsender to send downstream messages to this app.");
+                } else {
+                    //mInformationTextView.setText(getString(R.string.token_error_message));
+                    Log.i(TAG, "[GCM] An error occurred while either fetching the InstanceID token sending the fetched token to the server or subscribing to the PubSub topic. Please try running the sample again.");
+                }
+            }
+        };
 
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Log.i(TAG,"checkPlayServices()  OK......");
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+            Log.i(TAG, "GCM RegisterationIntentService start.......");
 
-       //2015-08-06 added  end
+        }
+
+        //2015-08-11 added end
 
         if (savedInstanceState != null) {
             authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
@@ -131,8 +156,6 @@ public class MainActivity extends ActionBarActivity  {
 
 
     }
-
-
 
     private void buildFitnessClient() {
         Log.i(TAG, "Connecting...");
@@ -169,6 +192,26 @@ public class MainActivity extends ActionBarActivity  {
 
                         }
                     });
+    }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "[checkPlayServices]This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
 /*
@@ -244,10 +287,13 @@ public class MainActivity extends ActionBarActivity  {
         super.onResume();
         // Connect to the Fitness API
         Log.i(TAG, "MainActiviey   onResume .....................");
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
     }
 
     @Override
     protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
         // Connect to the Fitness API
         Log.i(TAG, "MainActiviey   onPause .....................");
