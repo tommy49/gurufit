@@ -24,7 +24,7 @@ public class AutoStartUp extends BroadcastReceiver {
         mManager = (AlarmManager)ctxt.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(ctxt, AlarmRecever.class);
         PendingIntent pender = PendingIntent.getBroadcast(ctxt, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 10000, 5 * 60000, pender);
+        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 60000*5 , 10 * 60000, pender);
 //        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, 1*6000, pender);
 
         Log.e(TAG, "REBoot Completed.  Alarm Manager Restart.");

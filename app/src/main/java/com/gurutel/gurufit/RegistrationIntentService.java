@@ -4,12 +4,16 @@ package com.gurutel.gurufit;
  * Created by udnet_pc1 on 2015-08-11.
  */
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.Patterns;
 
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -28,6 +32,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static android.os.Build.SERIAL;
 
@@ -94,8 +99,19 @@ public class RegistrationIntentService extends IntentService {
 
         HttpURLConnection urlConnection = null;
         URL mURL = null;
+        String email=null;
 
         String sUrl="http://211.115.217.70/GuruFit/GCM_User.php";
+
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+        Account[] accounts = AccountManager.get(this).getAccounts();
+        for (Account account : accounts) {
+            //Log.d(TAG, "GCM_User ACCOUNT Name : " + account.name);
+            if (emailPattern.matcher(account.name).matches()) {
+                email = account.name;
+             //   Log.d(TAG, "GCM_User email : " + email);
+            }
+        }
 
         try{
             mURL = new URL(sUrl);
@@ -110,8 +126,8 @@ public class RegistrationIntentService extends IntentService {
 
             params.add(new BasicNameValuePair("PhoneNumber", MyGlobals.getInstance().getmMyPhoneNumber()));
             params.add(new BasicNameValuePair("Serial", SERIAL));
+            params.add(new BasicNameValuePair("Email", email));
             params.add(new BasicNameValuePair("Token", token));
-
 
             Log.i(TAG,"GCM_User params:"+params);
 

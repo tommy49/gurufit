@@ -28,7 +28,7 @@ public class AlarmRecever extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // TODO Auto-generated method stub
 
-        Log.e(TAG, "AlarmReceiver 111 Started.");
+        Log.e(TAG, "AlarmReceiver Started.");
 
         TelephonyManager telManager = (TelephonyManager)context.getSystemService(context.TELEPHONY_SERVICE);
         String phoneNum = telManager.getLine1Number();
@@ -40,7 +40,7 @@ public class AlarmRecever extends BroadcastReceiver {
 //        context.startActivity(i);
         i.putExtra("phoneNum",phoneNum);
         context.startService(i);
-        Toast.makeText(context, "hi2", Toast.LENGTH_LONG).show();
+//        Toast.makeText(context, "hi2", Toast.LENGTH_LONG).show();
 
     }
 }

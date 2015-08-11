@@ -1,5 +1,6 @@
 package com.gurutel.gurufit;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -59,18 +60,24 @@ public class MyGcmListenerService extends GcmListenerService{
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle()
+                .bigText(message)
+                ;
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_ic_notification)
-            //    .setContentTitle("GCM Message")
                 .setContentTitle("GuruFit Message")
                 .setContentText(message)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setStyle(bigTextStyle)
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
+
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 }
