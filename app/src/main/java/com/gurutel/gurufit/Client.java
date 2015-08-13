@@ -11,6 +11,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -22,6 +23,7 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.location.LocationServices;
 
 import static android.app.PendingIntent.getActivity;
 
@@ -47,6 +49,7 @@ public class Client {
         Log.i(TAG, "GoogleApiClient Start");
             this.connection = connection;
         client = new GoogleApiClient.Builder(activity)
+                .addApi(LocationServices.API)
                 .addApi(Fitness.CONFIG_API)
                 .addApi(Fitness.SESSIONS_API)
                 .addApi(Fitness.SENSORS_API)
@@ -103,6 +106,7 @@ public class Client {
                         }
                 )
                 .build();
+
     }
 
 

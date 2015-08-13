@@ -97,7 +97,6 @@ public class Sensors {
                                                 Log.i(TAG,"Accuracy Set : "+value);
                                                 MyGlobals.getInstance().setmAccuracy(String.valueOf(value));
                                             }
-
                                         }
                                         Log.i(TAG, msg);
                                         unsubscribe();
@@ -202,8 +201,10 @@ public class Sensors {
                                 //Log.i(TAG, "Step Start Date : " + MyGlobals.getInstance().getmStepStartDate());
                                 //Log.i(TAG, "Step End Date : " + MyGlobals.getInstance().getmStepEndtDate());
                                 //Log.i(TAG, "Step Count : " + MyGlobals.getInstance().getmStepCount());
-                                sendInfo = new SendInfo();
-                                sendInfo.execute("");
+
+                           //     sendInfo = new SendInfo();
+                           //     sendInfo.execute("");
+
                             } else {
                                 Log.i(TAG, "Listener was not removed.");
                             }

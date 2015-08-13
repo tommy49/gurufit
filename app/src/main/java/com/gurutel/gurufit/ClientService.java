@@ -20,6 +20,7 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.location.LocationServices;
 
 import static android.app.PendingIntent.getActivity;
 
@@ -46,6 +47,7 @@ public class ClientService {
             Log.i(TAG, "GoogleApiClient Start");
             this.connection = connection;
             client = new GoogleApiClient.Builder(service)
+                    .addApi(LocationServices.API)
                     .addApi(Fitness.CONFIG_API)
                     .addApi(Fitness.SESSIONS_API)
                     .addApi(Fitness.SENSORS_API)

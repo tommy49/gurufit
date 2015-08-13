@@ -30,6 +30,8 @@ public class History {
     public static final String TAG = "GuruFit";
     private GoogleApiClient client;
 
+    private SendInfo sendInfo;
+
     public History(GoogleApiClient client) {
         this.client = client;
     }
@@ -121,6 +123,8 @@ public class History {
 
         msg += "]";
         Log.i(TAG, msg);
+        sendInfo = new SendInfo();
+        sendInfo.execute("");
     }
 
 }

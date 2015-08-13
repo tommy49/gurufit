@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.location.Location;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationServices;
 
 //import com.gurutel.gurufit.common.logger.Log;
 //import com.gurutel.gurufit.common.logger.LogView;
@@ -113,7 +115,6 @@ public class MainActivity extends ActionBarActivity  {
 
 
         resetAlarm(0,0);
-        setAlarm(0,0);
 
 //        mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), pender);
         //2015-08-06 added  end
@@ -166,7 +167,7 @@ public class MainActivity extends ActionBarActivity  {
                         sTime2 = System.currentTimeMillis();
                         Log.i(TAG, "Now Time sTime2 : " + sTime2 +"   TimeDiff : " + (sTime2 - sTime1));
 
-                        if((sTime2 - sTime1) > ( 1.5 * 60000)) {
+                        if((sTime2 - sTime1) > ( 3 * 60000)) {
                             buildFitnessClient();
                         }
 
@@ -198,11 +199,28 @@ public class MainActivity extends ActionBarActivity  {
                         @Override
                         public void onConnected() {
 
+                         try {
+                            Log.i(TAG,"FusedLocationApi");
+                            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mClient.getClient());
+                            Log.i(TAG,"Location Latitude : "+mLastLocation.getLatitude());
+                            MyGlobals.getInstance().setmLat(String.valueOf(mLastLocation.getLatitude()));
+                            Log.i(TAG, "Location Longtitude : " + mLastLocation.getLongitude());
+                            MyGlobals.getInstance().setmLon(String.valueOf(mLastLocation.getLongitude()));
+                            Log.i(TAG, "Location Accuracy : " + mLastLocation.getAccuracy());
+                            MyGlobals.getInstance().setmAccuracy(String.valueOf(mLastLocation.getAccuracy()));
+                         }catch(Exception e){
+                              MyGlobals.getInstance().setmLat("0");
+                              MyGlobals.getInstance().setmLon("0");
+                              MyGlobals.getInstance().setmAccuracy("0");
+                              e.printStackTrace();
+                         }
+
                             recording = new Recording(mClient.getClient());
                             recording.subscribe();
 
                             history = new History(mClient.getClient());
                             history.readBefore(new Date());
+
 
                             /*
                             sensors = new Sensors(mClient.getClient(),
@@ -222,12 +240,15 @@ public class MainActivity extends ActionBarActivity  {
                             Log.i(TAG, "Sensors Subscribe start.....");
                             sensors.listDatasourcesAndSubscribe();
                             Log.i(TAG, "Sensors Subscribe End.....");
-                              */
+                            */
 
                         }
                     });
         mClient.connect();
         mClient.disconnect();
+
+
+
     }
 
     private boolean checkPlayServices() {
@@ -286,7 +307,7 @@ public class MainActivity extends ActionBarActivity  {
     private void setAlarm(int curAlarm, int typeAlarm){
         if(typeAlarm==0) {
             mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 60000 * 5, 10 * 60000, pendingIntent(curAlarm, typeAlarm)); //6sec
-//            mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 5000 ,  30000, pendingIntent(curAlarm, typeAlarm)); //6sec
+           // mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 10000 ,  30000, pendingIntent(curAlarm, typeAlarm)); //6sec
 
         }else{
             mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000 , 60000, pendingIntent(curAlarm, typeAlarm)); //6sec
@@ -326,7 +347,7 @@ public class MainActivity extends ActionBarActivity  {
         if(mTimer != null)
            mTimer.cancel();
 
-        // setAlarm(0,0);
+         setAlarm(0,0);
          finish();
 
     }
