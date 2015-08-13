@@ -55,8 +55,8 @@ public class Sensors {
         Fitness.SensorsApi.findDataSources(client, new DataSourcesRequest.Builder()
                 .setDataTypes(
                         DataType.TYPE_LOCATION_SAMPLE)
-                   //     DataType.TYPE_STEP_COUNT_DELTA,
-                    //    DataType.TYPE_DISTANCE_DELTA,
+                      //  DataType.TYPE_STEP_COUNT_DELTA,
+                      //  DataType.TYPE_DISTANCE_DELTA)
                      //   DataType.TYPE_HEART_RATE_BPM )
                 .setDataSourceTypes(DataSource.TYPE_RAW, DataSource.TYPE_DERIVED)
                 .build())
@@ -72,9 +72,9 @@ public class Sensors {
                             datasources.add(device.getManufacturer() + " " + device.getModel() + " [" + dataSource.getDataType().getName() + " " + fields + "]");
 
                             final DataType dataType = dataSource.getDataType();
-                            if (dataType.equals(DataType.TYPE_LOCATION_SAMPLE)) {  //||
-                                //    dataType.equals(DataType.TYPE_STEP_COUNT_DELTA) ||
-                                //    dataType.equals(DataType.TYPE_DISTANCE_DELTA) ||
+                            if (dataType.equals(DataType.TYPE_LOCATION_SAMPLE)){// ||
+                                 //   dataType.equals(DataType.TYPE_STEP_COUNT_DELTA) ||
+                                  //  dataType.equals(DataType.TYPE_DISTANCE_DELTA)) {
                                 //    dataType.equals(DataType.TYPE_HEART_RATE_BPM)) {
 
                                 final OnDataPointListener listener = new OnDataPointListener() {

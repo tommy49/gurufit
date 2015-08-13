@@ -15,13 +15,16 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.graphics.Color;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.TextView;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-import com.gurutel.gurufit.common.logger.Log;
-import com.gurutel.gurufit.common.logger.LogView;
-import com.gurutel.gurufit.common.logger.LogWrapper;
-import com.gurutel.gurufit.common.logger.MessageOnlyLogFilter;
+//import com.gurutel.gurufit.common.logger.Log;
+//import com.gurutel.gurufit.common.logger.LogView;
+//import com.gurutel.gurufit.common.logger.LogWrapper;
+//import com.gurutel.gurufit.common.logger.MessageOnlyLogFilter;
 
 /*
 import com.google.android.gms.fitness.Fitness;
@@ -46,6 +49,8 @@ import com.google.android.gms.fitness.result.DataSourcesResult;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Timer;
+import java.util.TimerTask;
 //import java.util.List;
 //import java.util.concurrent.TimeUnit;
 
@@ -70,6 +75,13 @@ public class MainActivity extends ActionBarActivity  {
     private History history;
     private Sensors sensors;
 
+    private TimerTask mTask;
+    private Timer mTimer;
+    private TextView stepText;
+    private String stepCount;
+    private long sTime1;
+    private long sTime2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,17 +97,24 @@ public class MainActivity extends ActionBarActivity  {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        initializeLogging();
+        stepText = (TextView)findViewById(R.id.stepView);
+
+  //      initializeLogging();
 
         Log.i(TAG, "MainActivity  Phone Number : "+phoneNum);
 
         //2015-08-06 added start
      //   mNotification = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         mManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+
+
         mCalendar = new GregorianCalendar();
-        Log.i(TAG, " ToDate : "+mCalendar.getTime().toString());
+        Log.i(TAG, " ToDate : " + mCalendar.getTime().toString());
+
 
         resetAlarm(0,0);
+        setAlarm(0,0);
+
 //        mManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), pender);
         //2015-08-06 added  end
 
@@ -132,14 +151,47 @@ public class MainActivity extends ActionBarActivity  {
             authInProgress = savedInstanceState.getBoolean(AUTH_PENDING);
         }
 
+     //   Log.i(TAG, "MainActivity onCreate  STEP : " + MyGlobals.getInstance().getmStepCount());
 
-        buildFitnessClient();
+      //
+        mTask = new TimerTask() {
+            @Override
+            public void run() {
+                final Runnable timerAction = new Runnable() {
+                    @Override
+                    public void run() { //textview post를 처리 하기 위한 Action.
+                        Log.i(TAG, "TimerTask run executed............................");
+                       // Log.i(TAG, "MainActivity TimerTask run : " + MyGlobals.getInstance().getmStepCount());
+                        stepText.setText(MyGlobals.getInstance().getmStepCount());
+                        sTime2 = System.currentTimeMillis();
+                        Log.i(TAG, "Now Time sTime2 : " + sTime2 +"   TimeDiff : " + (sTime2 - sTime1));
 
+                        if((sTime2 - sTime1) > ( 1.5 * 60000)) {
+                            buildFitnessClient();
+                        }
+
+                    }
+                };
+                //Log.i(TAG, "MainActivity stepText.post................... ");
+                stepText.post(timerAction);
+
+            }
+        };
+
+        //Log.i(TAG, "MainActivity onCreate  STEP : " + MyGlobals.getInstance().getmStepCount());
+        mTimer = new Timer();
+        //mTimer.schedule(mTask, 1000);
+        mTimer.schedule(mTask, 5000, 10000);
 
     }
 
     private void buildFitnessClient() {
+
         Log.i(TAG, "Connecting...");
+
+        sTime1 = System.currentTimeMillis();
+        Log.i(TAG, "Now Time sTime1 : " + sTime1 );
+
         // Create the Google API Client
         mClient = new Client(this,
                     new Client.Connection(){
@@ -152,6 +204,7 @@ public class MainActivity extends ActionBarActivity  {
                             history = new History(mClient.getClient());
                             history.readBefore(new Date());
 
+                            /*
                             sensors = new Sensors(mClient.getClient(),
                                     new Sensors.DatasourcesListener() {
                                         @Override
@@ -169,10 +222,12 @@ public class MainActivity extends ActionBarActivity  {
                             Log.i(TAG, "Sensors Subscribe start.....");
                             sensors.listDatasourcesAndSubscribe();
                             Log.i(TAG, "Sensors Subscribe End.....");
-
+                              */
 
                         }
                     });
+        mClient.connect();
+        mClient.disconnect();
     }
 
     private boolean checkPlayServices() {
@@ -204,7 +259,8 @@ public class MainActivity extends ActionBarActivity  {
         super.onStart();
         // Connect to the Fitness API
         Log.i(TAG, "MainActiviey onStart Connecting...");
-        mClient.connect();
+        buildFitnessClient();
+
     }
 
     @Override
@@ -218,16 +274,23 @@ public class MainActivity extends ActionBarActivity  {
 
     @Override
     protected void onPause() {
+        Log.i(TAG, "MainActiviey   onPause .....................");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
         // Connect to the Fitness API
-        Log.i(TAG, "MainActiviey   onPause .....................");
+
 
    //     moveTaskToBack(true);
     }
 
     private void setAlarm(int curAlarm, int typeAlarm){
-        mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 60000 * 5, 10 * 60000, pendingIntent(curAlarm, typeAlarm)); //6sec
+        if(typeAlarm==0) {
+            mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 60000 * 5, 10 * 60000, pendingIntent(curAlarm, typeAlarm)); //6sec
+//            mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 5000 ,  30000, pendingIntent(curAlarm, typeAlarm)); //6sec
+
+        }else{
+            mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000 , 60000, pendingIntent(curAlarm, typeAlarm)); //6sec
+        }
         Log.i(TAG, "AlarmManger Register Date : "+mCalendar.getTime().toString());
     }
 
@@ -256,18 +319,22 @@ public class MainActivity extends ActionBarActivity  {
         super.onStop();
         Log.i(TAG, "MainActiviey   onStop .....................");
 
-        if (mClient != null)
-            mClient.disconnect();
+        //if (mClient != null)
+        //    mClient.disconnect();
 
-         setAlarm(0,0);
+        // resetAlarm(1,1);
+        if(mTimer != null)
+           mTimer.cancel();
+
+        // setAlarm(0,0);
          finish();
 
     }
 
     protected void onDestory() {
+        Log.i(TAG, "MainActiviey   onDestory .....................");
         super.onDestroy();
         // Connect to the Fitness API
-        Log.i(TAG, "MainActiviey   onDestory .....................");
     }
 
     @Override
@@ -282,7 +349,7 @@ public class MainActivity extends ActionBarActivity  {
         outState.putBoolean(AUTH_PENDING, authInProgress);
     }
 
-
+/*
     private void initializeLogging() {
         // Wraps Android's native log framework.
         LogWrapper logWrapper = new LogWrapper();
@@ -299,7 +366,7 @@ public class MainActivity extends ActionBarActivity  {
         Log.i(TAG, "Ready");
     }
 
-
+*/
 
 }
 
