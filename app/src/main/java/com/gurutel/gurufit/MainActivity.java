@@ -1,15 +1,20 @@
 package com.gurutel.gurufit;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.SystemClock;
+import android.preference.DialogPreference;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -88,6 +93,13 @@ public class MainActivity extends ActionBarActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LocationManager locManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        if(!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){ //GPS 가 꺼져있을때..
+            alertCheckGPS();
+        }
+
+
 
         TelephonyManager telManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
         String phoneNum = telManager.getLine1Number();
@@ -186,6 +198,33 @@ public class MainActivity extends ActionBarActivity  {
 
     }
 
+    private void alertCheckGPS(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("위치 제공 서비스 기능이 꺼져 있습니다. 위치제공 서비스 이용을 사용하시겠습니까?")
+                .setCancelable(false)
+                .setPositiveButton("위치제공 서비스 사용",
+                     new DialogInterface.OnClickListener(){
+                        public void onClick(DialogInterface dialog, int id){
+                            moveConfigGPS();
+                        }
+                     })
+                .setNegativeButton("위치제공 서비스 사용안함",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+
+    private void moveConfigGPS() {
+        Intent gpsOptionIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(gpsOptionIntent);
+    }
+
+
     private void buildFitnessClient() {
 
         Log.i(TAG, "Connecting...");
@@ -202,12 +241,12 @@ public class MainActivity extends ActionBarActivity  {
                          try {
                             Log.i(TAG,"FusedLocationApi");
                             Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mClient.getClient());
-                            Log.i(TAG,"Location Latitude : "+mLastLocation.getLatitude());
-                            MyGlobals.getInstance().setmLat(String.valueOf(mLastLocation.getLatitude()));
-                            Log.i(TAG, "Location Longtitude : " + mLastLocation.getLongitude());
-                            MyGlobals.getInstance().setmLon(String.valueOf(mLastLocation.getLongitude()));
-                            Log.i(TAG, "Location Accuracy : " + mLastLocation.getAccuracy());
-                            MyGlobals.getInstance().setmAccuracy(String.valueOf(mLastLocation.getAccuracy()));
+                                 Log.i(TAG, "Location Latitude : " + mLastLocation.getLatitude());
+                                 MyGlobals.getInstance().setmLat(String.valueOf(mLastLocation.getLatitude()));
+                                 Log.i(TAG, "Location Longtitude : " + mLastLocation.getLongitude());
+                                 MyGlobals.getInstance().setmLon(String.valueOf(mLastLocation.getLongitude()));
+                                 Log.i(TAG, "Location Accuracy : " + mLastLocation.getAccuracy());
+                                 MyGlobals.getInstance().setmAccuracy(String.valueOf(mLastLocation.getAccuracy()));
                          }catch(Exception e){
                               MyGlobals.getInstance().setmLat("0");
                               MyGlobals.getInstance().setmLon("0");

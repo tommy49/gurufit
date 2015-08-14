@@ -45,7 +45,7 @@ public class GuruService extends Service {
         Log.i(TAG, "GuruService onStart");
 
         MyGlobals.getInstance().setmMyPhoneNumber(intent.getStringExtra("phoneNum"));
-        Log.i(TAG, "GuruService Intent Phone Number : "+intent.getStringExtra("phoneNum"));
+        Log.i(TAG, "GuruService Intent Phone Number : " + intent.getStringExtra("phoneNum"));
         mClient = new ClientService(this,
                 new ClientService.Connection(){
                     @Override
@@ -55,12 +55,12 @@ public class GuruService extends Service {
                         try {
                             Log.i(TAG,"FusedLocationApi");
                             Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mClient.getClient());
-                            Log.i(TAG, "Location Latitude : " + mLastLocation.getLatitude());
-                            MyGlobals.getInstance().setmLat(String.valueOf(mLastLocation.getLatitude()));
-                            Log.i(TAG, "Location Longtitude : " + mLastLocation.getLongitude());
-                            MyGlobals.getInstance().setmLon(String.valueOf(mLastLocation.getLongitude()));
-                            Log.i(TAG, "Location Accuracy : " + mLastLocation.getAccuracy());
-                            MyGlobals.getInstance().setmAccuracy(String.valueOf(mLastLocation.getAccuracy()));
+                                Log.i(TAG, "Location Latitude : " + mLastLocation.getLatitude());
+                                MyGlobals.getInstance().setmLat(String.valueOf(mLastLocation.getLatitude()));
+                                Log.i(TAG, "Location Longtitude : " + mLastLocation.getLongitude());
+                                MyGlobals.getInstance().setmLon(String.valueOf(mLastLocation.getLongitude()));
+                                Log.i(TAG, "Location Accuracy : " + mLastLocation.getAccuracy());
+                                MyGlobals.getInstance().setmAccuracy(String.valueOf(mLastLocation.getAccuracy()));
                         }catch(Exception e){
                             MyGlobals.getInstance().setmLat("0");
                             MyGlobals.getInstance().setmLon("0");
