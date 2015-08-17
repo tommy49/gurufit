@@ -4,6 +4,7 @@ package com.gurutel.gurufit;
  * Created by udnet_pc1 on 2015-08-07.
  */
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,6 +32,8 @@ public class History {
     private GoogleApiClient client;
 
     private SendInfo sendInfo;
+
+    private GuruSQLDB db;
 
     public History(GoogleApiClient client) {
         this.client = client;
@@ -117,7 +120,10 @@ public class History {
             msg += field.getName() + "=" + dp.getValue(field) + " ";
             if(field.getName().equals("steps")){
                 myGlobals.setmStepCount(String.valueOf(dp.getValue(field)));
+                db = new GuruSQLDB(this.client.getContext());
+                int dbUpStep = db.updateStep(String.valueOf(dp.getValue(field)));
                 Log.i(TAG, "STEPS COUNT : "+dp.getValue(field));
+                Log.i(TAG, "DB UPDATE RESULT : "+dbUpStep);
             }
         }
 

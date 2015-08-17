@@ -88,6 +88,7 @@ public class MainActivity extends ActionBarActivity  {
     private String stepCount;
     private long sTime1;
     private long sTime2;
+    GuruSQLDB db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +109,12 @@ public class MainActivity extends ActionBarActivity  {
         //globalApp.setmMyPhoneNumber(phoneNum);
         MyGlobals.getInstance().setmMyPhoneNumber(phoneNum);
 
+        db = new GuruSQLDB(this);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         stepText = (TextView)findViewById(R.id.stepView);
-
+        stepText.setText(db.getStep());
   //      initializeLogging();
 
         Log.i(TAG, "MainActivity  Phone Number : "+phoneNum);
