@@ -25,10 +25,10 @@ public class Recording {
     }
 
     public void subscribe() {
-        subscribe(DataType.TYPE_ACTIVITY_SAMPLE);
+   //     subscribe(DataType.TYPE_ACTIVITY_SAMPLE);
         subscribe(DataType.TYPE_STEP_COUNT_DELTA);
-        subscribe(DataType.TYPE_LOCATION_SAMPLE);
-        subscribe(DataType.TYPE_DISTANCE_DELTA);
+   //     subscribe(DataType.TYPE_LOCATION_SAMPLE);
+   //     subscribe(DataType.TYPE_DISTANCE_DELTA);
     }
 
     public void subscribe(final DataType dataType) {
@@ -65,7 +65,7 @@ public class Recording {
     }
 
     public void unsubscribe() {
-
+/*
         Fitness.RecordingApi.unsubscribe(client, DataType.TYPE_ACTIVITY_SAMPLE).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(Status status) {
@@ -76,7 +76,7 @@ public class Recording {
                 }
             }
         });
-
+*/
         Fitness.RecordingApi.unsubscribe(client, DataType.TYPE_STEP_COUNT_DELTA).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(Status status) {
@@ -87,7 +87,7 @@ public class Recording {
                 }
             }
         });
-
+/*
         Fitness.RecordingApi.unsubscribe(client, DataType.TYPE_LOCATION_SAMPLE).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(Status status) {
@@ -109,6 +109,6 @@ public class Recording {
                 }
             }
         });
-
+*/
     }
 }

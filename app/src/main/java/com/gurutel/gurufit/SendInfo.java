@@ -40,7 +40,8 @@ public class SendInfo extends AsyncTask<String,Void,Boolean> {
         HttpURLConnection urlConnection = null;
         URL mURL = null;
 
-        String sUrl="http://211.115.217.70/GuruFit/SetInfo.php";
+//        String sUrl="http://211.115.217.70/GuruFit/SetInfo.php";
+        String sUrl="http://data.udnet.co.kr/SetInfo.php";
 
         try{
           //Log.i(TAG,"SendInfo AsyncTask sUrl:"+sUrl);
