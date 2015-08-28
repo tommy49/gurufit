@@ -101,7 +101,8 @@ public class RegistrationIntentService extends IntentService {
         URL mURL = null;
         String email=null;
 
-        String sUrl="http://211.115.217.70/GuruFit/GCM_User.php";
+//        String sUrl="http://211.115.217.70/GuruFit/GCM_User.php";
+        String sUrl="http://data.udnet.co.kr/GCM_User.php";
 
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
         Account[] accounts = AccountManager.get(this).getAccounts();
