@@ -1,6 +1,12 @@
 <resources>
+
     <string name="app_name">GuruFit</string>
     <string name="intro_text">오늘 얼마나 걸으셨나요?  건강을 위해 조금 더 걸어보세요.</string>
     <string name="action_delete_session">Delete step count data</string>
     <string name="action_settings">Settings</string>
+    <string name="press_menu">Menu 버튼을 누르세요.</string>
+    <string name="mapview">지도 보기</string>
+    <string name="listview">고객 보기</string>
+    <string name="no_demos">No demos</string>
+
 </resources>

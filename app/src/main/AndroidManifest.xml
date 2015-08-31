@@ -4,6 +4,7 @@
 
     <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="19" />
 
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -67,6 +68,14 @@
             <!--
                android:theme="@android:style/Theme.NoDisplay">-->
         </activity>
+
+        <activity
+            android:name=".MapViewActivity"
+            android:label="MapView"></activity>
+
+        <activity
+            android:name=".CustomerListActivity"
+            android:label="ListView"></activity>
 
         <receiver android:name=".AlarmRecever" android:process=".remote">
         </receiver>

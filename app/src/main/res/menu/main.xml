@@ -11,4 +11,15 @@
         android:title="@string/action_delete_session"
         android:orderInCategory="100"
         app:showAsAction="never" />
+<!--
+    <item android:id="@+id/map_view"
+        android:title="@string/mapview"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+-->
+    <item android:id="@+id/list_view"
+        android:title="@string/listview"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
 </menu>
