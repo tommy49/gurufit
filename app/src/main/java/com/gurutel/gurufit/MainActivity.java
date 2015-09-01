@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 //import com.gurutel.gurufit.common.logger.Log;
@@ -76,6 +77,9 @@ public class MainActivity extends ActionBarActivity  {
 
 
 
+
+
+
     private AlarmManager mManager;
     private GregorianCalendar mCalendar;
 
@@ -96,6 +100,8 @@ public class MainActivity extends ActionBarActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         LocationManager locManager = (LocationManager)getSystemService(LOCATION_SERVICE);
         if(!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){ //GPS 가 꺼져있을때..
@@ -241,7 +247,7 @@ public class MainActivity extends ActionBarActivity  {
                     new Client.Connection(){
                         @Override
                         public void onConnected() {
-
+                        /*
                          try {
                             Log.i(TAG,"FusedLocationApi");
                             Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mClient.getClient());
@@ -257,6 +263,7 @@ public class MainActivity extends ActionBarActivity  {
                               MyGlobals.getInstance().setmAccuracy("0");
                               e.printStackTrace();
                          }
+                        */
 
                             recording = new Recording(mClient.getClient());
                             recording.subscribe();
@@ -265,7 +272,7 @@ public class MainActivity extends ActionBarActivity  {
                             history.readBefore(new Date());
 
 
-                            /*
+
                             sensors = new Sensors(mClient.getClient(),
                                     new Sensors.DatasourcesListener() {
                                         @Override
@@ -283,7 +290,7 @@ public class MainActivity extends ActionBarActivity  {
                             Log.i(TAG, "Sensors Subscribe start.....");
                             sensors.listDatasourcesAndSubscribe();
                             Log.i(TAG, "Sensors Subscribe End.....");
-                            */
+
 
                         }
                     });

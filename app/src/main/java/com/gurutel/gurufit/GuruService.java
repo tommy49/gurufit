@@ -51,7 +51,7 @@ public class GuruService extends Service {
                     @Override
                     public void onConnected() {
                         Log.i(TAG, "API Connected..... ["+mClient+"]");
-
+                        /*
                         try {
                             Log.i(TAG,"FusedLocationApi");
                             Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mClient.getClient());
@@ -67,7 +67,7 @@ public class GuruService extends Service {
                             MyGlobals.getInstance().setmAccuracy("0");
                             e.printStackTrace();
                         }
-
+*/
                         recording = new Recording(mClient.getClient());
                         recording.subscribe();
                         history = new History(mClient.getClient());
@@ -76,7 +76,7 @@ public class GuruService extends Service {
 
 
 
-                        /*
+
                         sensors = new Sensors(mClient.getClient(),
                                 new Sensors.DatasourcesListener() {
                                     @Override
@@ -93,7 +93,7 @@ public class GuruService extends Service {
 
 
                         sensors.listDatasourcesAndSubscribe();
-                        */
+
                     }
                 });
         mClient.connect();

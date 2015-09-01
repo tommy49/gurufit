@@ -202,8 +202,8 @@ public class Sensors {
                                 //Log.i(TAG, "Step End Date : " + MyGlobals.getInstance().getmStepEndtDate());
                                 //Log.i(TAG, "Step Count : " + MyGlobals.getInstance().getmStepCount());
 
-                           //     sendInfo = new SendInfo();
-                           //     sendInfo.execute("");
+                                sendInfo = new SendInfo();
+                                sendInfo.execute("");
 
                             } else {
                                 Log.i(TAG, "Listener was not removed.");

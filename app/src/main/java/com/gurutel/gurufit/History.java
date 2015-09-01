@@ -129,8 +129,8 @@ public class History {
 
         msg += "]";
         Log.i(TAG, msg);
-        sendInfo = new SendInfo();
-        sendInfo.execute("");
+       // sendInfo = new SendInfo();
+      //  sendInfo.execute("");
     }
 
 }

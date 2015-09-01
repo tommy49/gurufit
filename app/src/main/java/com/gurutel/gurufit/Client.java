@@ -52,12 +52,12 @@ public class Client {
                 .addApi(LocationServices.API)
               //  .addApi(Fitness.CONFIG_API)
               //  .addApi(Fitness.SESSIONS_API)
-              //  .addApi(Fitness.SENSORS_API)
+                .addApi(Fitness.SENSORS_API)
                 .addApi(Fitness.RECORDING_API)
                 .addApi(Fitness.HISTORY_API)
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
              //   .addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
-             //   .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
+                .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
                 .addConnectionCallbacks(
                         new GoogleApiClient.ConnectionCallbacks() {
 
