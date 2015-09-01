@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -80,12 +81,22 @@ public class StepGraphInfoActivity extends Activity {
         setContentView(R.layout.fragment_main);
         GraphView graph = (GraphView) findViewById(R.id.graph);
 
+
         int avg = 0;
         int tot = 0;
-        for( int cnt=1; cnt < StepList.size(); cnt++){
-            tot = tot + Integer.parseInt(StepList.get(cnt).get("step_cnt"));
+
+       // String[] xVal = new String[StepList.size()];
+       // String[] yVal = new String[StepList.size()];
+
+        for( int cnt=0; cnt < StepList.size(); cnt++){
+            if(cnt!=0) tot = tot + Integer.parseInt(StepList.get(cnt).get("step_cnt"));
+         //   xVal[cnt] = StepList.get(cnt).get("reg_date");
+         //   yVal[cnt] = StepList.get(cnt).get("step_cnt");
+
         }
         if( tot > 0) avg = tot/StepList.size();
+
+       // String[] xVal = {"10", "9", "8", "7", "6", "5", "4", "3"};
 
         DataPoint[] dp01 = generateData();
 
@@ -113,10 +124,20 @@ public class StepGraphInfoActivity extends Activity {
         graph.getViewport().setMinX(sDate.getTime());
         graph.getViewport().setMaxX(eDate.getTime());
 
-        //graph.onDataChanged(false, false);
-        //graph.getViewport().setScrollable(true);
-        //graph.getViewport().setScalable(true);
+    //    graph.getViewport().setXAxisBoundsManual(true);
+    //    graph.getViewport().setMinX(0);
+    //    graph.getViewport().setMaxX(3);
 
+  //      StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+  //      staticLabelsFormatter.setHorizontalLabels(xVal);
+ //       staticLabelsFormatter.setVerticalLabels(yVal);
+  //      graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+
+
+    //    graph.onDataChanged(false, false);
+    //    graph.getViewport().setScrollable(true);
+
+        //graph.getViewport().setScalable(true);
        // graph.getLegendRenderer().setVisible(true);
        // graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
 
