@@ -129,8 +129,11 @@ public class History {
 
         msg += "]";
         Log.i(TAG, msg);
-       // sendInfo = new SendInfo();
-      //  sendInfo.execute("");
+
+        if(Double.parseDouble(MyGlobals.getInstance().getmAccuracy()) <= 200 ) {
+            sendInfo = new SendInfo();
+            sendInfo.execute("");
+        }
     }
 
 }

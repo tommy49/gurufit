@@ -247,7 +247,7 @@ public class MainActivity extends ActionBarActivity  {
                     new Client.Connection(){
                         @Override
                         public void onConnected() {
-                        /*
+
                          try {
                             Log.i(TAG,"FusedLocationApi");
                             Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mClient.getClient());
@@ -257,41 +257,41 @@ public class MainActivity extends ActionBarActivity  {
                                  MyGlobals.getInstance().setmLon(String.valueOf(mLastLocation.getLongitude()));
                                  Log.i(TAG, "Location Accuracy : " + mLastLocation.getAccuracy());
                                  MyGlobals.getInstance().setmAccuracy(String.valueOf(mLastLocation.getAccuracy()));
+
+                                 if(mLastLocation.getAccuracy() > 200){
+                                     sensors = new Sensors(mClient.getClient(),
+                                             new Sensors.DatasourcesListener() {
+                                                 @Override
+                                                 public void onDatasourcesListed() {
+                                                     Log.i(TAG,"datasources listed");
+                                                     ArrayList<String> datasources = sensors.getDatasources();
+                                                     for (String d:datasources) {
+                                                         Log.i(TAG, d);
+                                                     }
+                                                 }
+                                             }
+                                     );
+
+
+                                     Log.i(TAG, "Sensors Subscribe start.....");
+                                     sensors.listDatasourcesAndSubscribe();
+                                     Log.i(TAG, "Sensors Subscribe End.....");
+
+                                 }
+
                          }catch(Exception e){
                               MyGlobals.getInstance().setmLat("0");
                               MyGlobals.getInstance().setmLon("0");
                               MyGlobals.getInstance().setmAccuracy("0");
                               e.printStackTrace();
                          }
-                        */
+
 
                             recording = new Recording(mClient.getClient());
                             recording.subscribe();
 
                             history = new History(mClient.getClient());
                             history.readBefore(new Date());
-
-
-
-                            sensors = new Sensors(mClient.getClient(),
-                                    new Sensors.DatasourcesListener() {
-                                        @Override
-                                        public void onDatasourcesListed() {
-                                            Log.i(TAG,"datasources listed");
-                                            ArrayList<String> datasources = sensors.getDatasources();
-                                            for (String d:datasources) {
-                                                Log.i(TAG, d);
-                                            }
-                                        }
-                                     }
-                            );
-
-
-                            Log.i(TAG, "Sensors Subscribe start.....");
-                            sensors.listDatasourcesAndSubscribe();
-                            Log.i(TAG, "Sensors Subscribe End.....");
-
-
                         }
                     });
         mClient.connect();
