@@ -108,6 +108,7 @@ public class Sensors {
                                                 .setDataSource(dataSource)
                                                 .setDataType(dataType)
                                                 .setSamplingRate(10, TimeUnit.SECONDS)
+                                                .setTimeout(30,TimeUnit.SECONDS)
                                                 .build(),
                                         listener)
                                         .setResultCallback(new ResultCallback<Status>() {
