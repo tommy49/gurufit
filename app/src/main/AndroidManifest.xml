@@ -77,6 +77,10 @@
             android:name=".CustomerListActivity"
             android:label="ListView"></activity>
 
+        <activity
+            android:name=".StepGraphInfoActivity"
+            android:label="GraphView"></activity>
+
         <receiver android:name=".AlarmRecever" android:process=".remote">
         </receiver>
 

@@ -103,6 +103,10 @@ public class CustomerListActivity extends Activity {
                           @Override
                           public void onClick(View v) {
                               Log.d(TAG, "========= Click Button 3 [" + CustomerList.get(position).get("email") + "]===============================================");
+                              Intent i = new Intent(v.getContext(), StepGraphInfoActivity.class);
+                              i.putExtra("serial",CustomerList.get(position).get("serial"));
+                              startActivity(i);
+                              finish();
                           }
                       });
 
