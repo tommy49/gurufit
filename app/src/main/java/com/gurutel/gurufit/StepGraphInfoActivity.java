@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
@@ -52,6 +53,7 @@ public class StepGraphInfoActivity extends Activity {
     String responseBody="";
     Calendar calendar = Calendar.getInstance();
     Date sDate, eDate;
+    private TextView GIText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,8 @@ public class StepGraphInfoActivity extends Activity {
         Intent i = getIntent();
         String serial = i.getStringExtra("serial");
         Log.d(TAG, "Step Graph Info Serial : " + serial);
+
+
 
         try{
             String sURL = "http://data.udnet.co.kr/GetCustStep.php?serial="+serial;
@@ -81,6 +85,7 @@ public class StepGraphInfoActivity extends Activity {
         setContentView(R.layout.fragment_main);
         GraphView graph = (GraphView) findViewById(R.id.graph);
 
+        GIText = (TextView)findViewById(R.id.section_label);
 
         int avg = 0;
         int tot = 0;
@@ -96,61 +101,68 @@ public class StepGraphInfoActivity extends Activity {
         }
         if( tot > 0) avg = tot/StepList.size();
 
+        Log.d(TAG, "========= StepList isze [" + StepList.size() + "]===============================================");
+
        // String[] xVal = {"10", "9", "8", "7", "6", "5", "4", "3"};
+        if(StepList.size() > 0) {
 
-        DataPoint[] dp01 = generateData();
+                GIText.setText(serial);
 
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(generateAvgData(avg));
-        graph.addSeries(series);
+                DataPoint[] dp01 = generateData();
 
-        LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(dp01);
-        graph.addSeries(series2);
+                LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(generateAvgData(avg));
+                graph.addSeries(series);
 
-        PointsGraphSeries<DataPoint> series3 = new PointsGraphSeries<DataPoint>(dp01);
-        graph.addSeries(series3);
-        series3.setColor(Color.BLACK);
-        series3.setSize(10);
+                LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(dp01);
+                graph.addSeries(series2);
 
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(3);
+                PointsGraphSeries<DataPoint> series3 = new PointsGraphSeries<DataPoint>(dp01);
+                graph.addSeries(series3);
+                series3.setColor(Color.BLACK);
+                series3.setSize(10);
 
-        series.setTitle("AVG");
-        series2.setTitle("STEP");
+                graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
+                graph.getGridLabelRenderer().setNumHorizontalLabels(3);
 
-        series.setColor(Color.BLUE);
-        series2.setColor(Color.RED);
+                series.setTitle("AVG");
+                series2.setTitle("STEP");
 
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMinX(sDate.getTime());
-        graph.getViewport().setMaxX(eDate.getTime());
+                series.setColor(Color.BLUE);
+                series2.setColor(Color.RED);
 
-    //    graph.getViewport().setXAxisBoundsManual(true);
-    //    graph.getViewport().setMinX(0);
-    //    graph.getViewport().setMaxX(3);
+                graph.getViewport().setXAxisBoundsManual(true);
+                graph.getViewport().setMinX(sDate.getTime());
+                graph.getViewport().setMaxX(eDate.getTime());
 
-  //      StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-  //      staticLabelsFormatter.setHorizontalLabels(xVal);
- //       staticLabelsFormatter.setVerticalLabels(yVal);
-  //      graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+                //    graph.getViewport().setXAxisBoundsManual(true);
+                //    graph.getViewport().setMinX(0);
+                //    graph.getViewport().setMaxX(3);
 
-
-    //    graph.onDataChanged(false, false);
-    //    graph.getViewport().setScrollable(true);
-
-        //graph.getViewport().setScalable(true);
-       // graph.getLegendRenderer().setVisible(true);
-       // graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
+                //      StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+                //      staticLabelsFormatter.setHorizontalLabels(xVal);
+                //       staticLabelsFormatter.setVerticalLabels(yVal);
+                //      graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
 
-        series3.setOnDataPointTapListener(new OnDataPointTapListener() {
-            @Override
-            public void onTap(Series series, DataPointInterface dataPoint) {
+                //    graph.onDataChanged(false, false);
+                //    graph.getViewport().setScrollable(true);
 
-                String tDate = new SimpleDateFormat("yyyy-MM-dd").format(dataPoint.getX());
-                Toast.makeText(getApplicationContext(), "DATE[" + tDate + "]  STEPS ["+ Double.toString(dataPoint.getY()).replace(".0","") +"]", Toast.LENGTH_SHORT).show();
-            }
-        });
+                //graph.getViewport().setScalable(true);
+                // graph.getLegendRenderer().setVisible(true);
+                // graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
 
+
+                series3.setOnDataPointTapListener(new OnDataPointTapListener() {
+                    @Override
+                    public void onTap(Series series, DataPointInterface dataPoint) {
+
+                        String tDate = new SimpleDateFormat("yyyy-MM-dd").format(dataPoint.getX());
+                        Toast.makeText(getApplicationContext(), "DATE[" + tDate + "]  STEPS [" + Double.toString(dataPoint.getY()).replace(".0", "") + "]", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        }else {
+            GIText.setText("데이타가 없습니다.");
+        }
     }
 
 

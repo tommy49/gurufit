@@ -189,7 +189,7 @@ public class MainActivity extends ActionBarActivity  {
                         sTime2 = System.currentTimeMillis();
                         Log.i(TAG, "Now Time sTime2 : " + sTime2 +"   TimeDiff : " + (sTime2 - sTime1));
 
-                        if((sTime2 - sTime1) > ( 3 * 60000)) {
+                        if((sTime2 - sTime1) > ( 10 * 60000)) {
                             buildFitnessClient();
                         }
 
@@ -356,7 +356,7 @@ public class MainActivity extends ActionBarActivity  {
 
     private void setAlarm(int curAlarm, int typeAlarm){
         if(typeAlarm==0) {
-            mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 60000 * 5, 10 * 60000, pendingIntent(curAlarm, typeAlarm)); //6sec
+            mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 60000 * 5, 30 * 60000, pendingIntent(curAlarm, typeAlarm)); //6sec
            // mManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 10000 ,  30000, pendingIntent(curAlarm, typeAlarm)); //6sec
 
         }else{
