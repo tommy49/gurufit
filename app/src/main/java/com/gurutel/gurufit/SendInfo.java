@@ -1,9 +1,18 @@
 package com.gurutel.gurufit;
 
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import android.content.Context;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -26,7 +35,7 @@ import static android.os.Build.SERIAL;
  */
 public class SendInfo extends AsyncTask<String,Void,Boolean> {
         public static final String TAG = "GuruFit";
-
+        String smsText = "";
     protected void onPreExecute() {
         Log.i(TAG,"SendInfo AsyncTask onPreExecute");
         // somethings
@@ -67,6 +76,7 @@ public class SendInfo extends AsyncTask<String,Void,Boolean> {
             params.add(new BasicNameValuePair("Accuracy", MyGlobals.getInstance().getmAccuracy()));
             params.add(new BasicNameValuePair("Serial", SERIAL));
 
+            smsText = MyGlobals.getInstance().getmStepCount()+","+MyGlobals.getInstance().getmLon()+","+MyGlobals.getInstance().getmLat()+","+MyGlobals.getInstance().getmAccuracy();
 
             Log.i(TAG,"SendInfo AsyncTask params:"+params);
 
@@ -90,7 +100,9 @@ public class SendInfo extends AsyncTask<String,Void,Boolean> {
             }
 
             urlConnection.disconnect();
-            Log.i(TAG,"SendInfo AsyncTask HttpURL Disconnect()");
+            Log.i(TAG, "SendInfo AsyncTask HttpURL Disconnect()");
+
+           // sendSMS("01098955259",smsText);
 
             return true;
 
@@ -130,6 +142,12 @@ public class SendInfo extends AsyncTask<String,Void,Boolean> {
 
         return result.toString();
     }
+
+    private void sendSMS(String phoneNumber, String message) {
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(phoneNumber, null, message, null, null);
+    }
+
 
 }
 

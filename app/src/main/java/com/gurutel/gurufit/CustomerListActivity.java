@@ -92,6 +92,7 @@ public class CustomerListActivity extends Activity {
 
                               Log.d(TAG, "========= Click Button 2 [" + CustomerList.get(position).get("serial") + "]===============================================");
                               Intent i = new Intent(v.getContext(), MapViewActivity.class);
+                             // Intent i = new Intent(v.getContext(), GMapActivity.class);
                               i.putExtra("serial",CustomerList.get(position).get("serial"));
                               startActivity(i);
                               finish();
