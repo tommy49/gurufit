@@ -28,6 +28,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
@@ -65,7 +67,7 @@ import java.util.TimerTask;
 //import java.util.concurrent.TimeUnit;
 
 
-public class MainActivity extends ActionBarActivity  {
+public class MainActivity extends ActionBarActivity implements LocationListener{
 
     public static final String TAG = "GuruFit";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -95,6 +97,8 @@ public class MainActivity extends ActionBarActivity  {
     private long sTime1;
     private long sTime2;
     GuruSQLDB db;
+
+    private LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,6 +254,8 @@ public class MainActivity extends ActionBarActivity  {
 
                          try {
                             Log.i(TAG,"FusedLocationApi");
+
+
                             Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mClient.getClient());
                                  Log.i(TAG, "Location Latitude : " + mLastLocation.getLatitude());
                                  MyGlobals.getInstance().setmLat(String.valueOf(mLastLocation.getLatitude()));
@@ -258,7 +264,13 @@ public class MainActivity extends ActionBarActivity  {
                                  Log.i(TAG, "Location Accuracy : " + mLastLocation.getAccuracy());
                                  MyGlobals.getInstance().setmAccuracy(String.valueOf(mLastLocation.getAccuracy()));
 
-                                 if(mLastLocation.getAccuracy() > 200){
+                                 if(mLastLocation.getAccuracy() > 10){
+                                     mLocationRequest = new LocationRequest();
+                                     mLocationRequest.setInterval(10000);
+                                     mLocationRequest.setFastestInterval(5000);
+                                     mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                                     startLocationUpdates();
+                                     /*
                                      sensors = new Sensors(mClient.getClient(),
                                              new Sensors.DatasourcesListener() {
                                                  @Override
@@ -276,7 +288,7 @@ public class MainActivity extends ActionBarActivity  {
                                      Log.i(TAG, "Sensors Subscribe start.....");
                                      sensors.listDatasourcesAndSubscribe();
                                      Log.i(TAG, "Sensors Subscribe End.....");
-
+                                    */
                                  }
 
                          }catch(Exception e){
@@ -316,6 +328,11 @@ public class MainActivity extends ActionBarActivity  {
         return true;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.i(TAG, "onLocationChanged  Location lat [" + location.getLatitude() + "] Location lon [" + location.getLongitude() + "] Location Accuracy [" + location.getAccuracy() + "]");
+        stopLocationUpdates();
+    }
 
     @Override
     protected void onRestart() {
@@ -353,6 +370,26 @@ public class MainActivity extends ActionBarActivity  {
 
    //     moveTaskToBack(true);
     }
+
+    protected void startLocationUpdates() {
+        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
+        Log.i(TAG, "FusedLocationApi.requestLocationUpdates");
+        LocationServices.FusedLocationApi.requestLocationUpdates(mClient.getClient(), mLocationRequest, this);
+
+    }
+
+    protected void stopLocationUpdates() {
+        // It is a good practice to remove location requests when the activity is in a paused or
+        // stopped state. Doing so helps battery performance and is especially
+        // recommended in applications that request frequent location updates.
+
+        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
+        LocationServices.FusedLocationApi.removeLocationUpdates(mClient.getClient(), this);
+    }
+
+
 
     private void setAlarm(int curAlarm, int typeAlarm){
         if(typeAlarm==0) {
